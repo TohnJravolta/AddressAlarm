@@ -1,0 +1,6 @@
+R_DEF: Internal format may change without notice
+local
+string accessibility_service_description
+string app_name
+style Theme.Material3.DayNight.NoActionBar
+xml accessibility_config

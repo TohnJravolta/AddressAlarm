@@ -1,0 +1,19 @@
+{
+    "logs": [
+        {
+            "outputFile": "org.flagdrive.app-mergeDebugResources-71:/values-port/values-port.xml",
+            "map": [
+                {
+                    "source": "C:\\Users\\jarde\\.gradle\\caches\\transforms-4\\48bf28aaaa7b22cbfdfd7a4ce6b79733\\transformed\\appcompat-1.6.1\\res\\values-port\\values-port.xml",
+                    "from": {
+                        "startLines": "2",
+                        "startColumns": "4",
+                        "startOffsets": "55",
+                        "endColumns": "55",
+                        "endOffsets": "106"
+                    }
+                }
+            ]
+        }
+    ]
+}

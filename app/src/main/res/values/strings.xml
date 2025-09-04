@@ -1,0 +1,4 @@
+<resources>
+<string name="app_name">FlagDrive</string>
+<string name="accessibility_service_description">Watches on-screen text to warn about flagged places.</string>
+</resources>

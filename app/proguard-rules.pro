@@ -1,0 +1,3 @@
+-keep class org.flagdrive.service.** { *; }
+-keep class androidx.room.** { *; }
+-keep class * extends android.accessibilityservice.AccessibilityService
