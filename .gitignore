@@ -1,22 +1,62 @@
+# ==================================
+# Android / Android Studio .gitignore
+# ==================================
+
 # Gradle
 .gradle/
 build/
 */build/
+!gradle/wrapper/gradle-wrapper.jar
 
-# Local configuration file (sdk path, etc.)
+# Local configuration file (sdk path, signing keys, etc.)
 local.properties
+key.properties
 
-# IntelliJ/Android Studio
+# IntelliJ / Android Studio
 .idea/
 *.iml
+*.ipr
+*.iws
+.idea/caches/
+.idea/libraries/
+.idea/modules.xml
+.idea/workspace.xml
+.idea/navEditor.xml
+.idea/assetWizardSettings.xml
 
-# Log files
+# Logs
 *.log
 
 # NDK / C++
 .cxx/
 .externalNativeBuild/
 
+# Generated files
+captures/
+output.json
+
 # Misc
 .DS_Store
-captures/
+*.swp
+*.tmp
+
+# Keystore files (signing keys, don’t commit!)
+*.jks
+*.keystore
+
+# Android Profiling
+*.hprof
+
+# Gradle Daemon logs
+.gradle/daemon/
+
+# Android Crashlytics (if used)
+crashlytics-build.properties
+fabric.properties
+
+# Google Services (if used)
+google-services.json
+
+# ==================================
+# END
+# ==================================
