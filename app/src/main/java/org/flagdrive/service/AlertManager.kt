@@ -6,7 +6,6 @@ import android.app.NotificationManager
 import android.content.Context
 import android.os.Build
 import androidx.core.app.NotificationCompat
-import org.flagdrive.R
 import org.flagdrive.match.MatchResult
 
 object AlertManager {
@@ -16,37 +15,33 @@ object AlertManager {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val nm = ctx.getSystemService(NotificationManager::class.java)
             if (nm.getNotificationChannel(CHANNEL_ID) == null) {
-                val ch = NotificationChannel(
+                val channel = NotificationChannel(
                     CHANNEL_ID,
                     "FlagDrive alerts",
                     NotificationManager.IMPORTANCE_HIGH
                 ).apply {
                     description = "Heads-up notifications for detected matches"
                 }
-                nm.createNotificationChannel(ch)
+                nm.createNotificationChannel(channel)
             }
         }
     }
 
     fun notifyMatch(ctx: Context, match: MatchResult) {
         ensureChannel(ctx)
-        val nm = ctx.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
-        val notif: Notification = NotificationCompat.Builder(ctx, CHANNEL_ID)
+        val title = "⚑ ${match.place.name ?: match.place.rawAddress}"
+        val details = "Tags: ${match.tagsSummary}  •  score ${match.score}"
+
+        val notification: Notification = NotificationCompat.Builder(ctx, CHANNEL_ID)
+            .setContentTitle(title)
+            .setContentText(details)
             .setSmallIcon(android.R.drawable.stat_sys_warning)
-            .setContentTitle("⚑ ${match.place.name ?: match.place.rawAddress}")
-            .setContentText("Tags: ${match.tagsSummary} · score ${match.score}")
             .setPriority(NotificationCompat.PRIORITY_HIGH)
-            .setCategory(NotificationCompat.CATEGORY_MESSAGE)
             .setAutoCancel(true)
             .build()
 
-        // Use a fresh ID so every match can heads-up.
-        val id = (System.currentTimeMillis() and 0x7FFFFFFF).toInt()
-        try {
-            nm.notify(id, notif)
-        } catch (_: SecurityException) {
-            // Permission denied => no-op
-        }
+        val nm = ctx.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        nm.notify(1001, notification)
     }
 }

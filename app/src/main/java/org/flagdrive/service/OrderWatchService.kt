@@ -10,15 +10,19 @@ import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
 import org.flagdrive.data.AppDatabase
 import org.flagdrive.match.AddressMatcher
+import org.flagdrive.match.MatchResult // ← unify on the match package
 
-/**
- * Watches the screen (via Accessibility) and tries to match visible text
- * against your saved places. When a match is found, it posts a heads-up
- * notification through [AlertManager].
- */
 class OrderWatchService : AccessibilityService() {
 
     private val scope = CoroutineScope(Dispatchers.Default + SupervisorJob())
+
+    // Debounce state
+    private var lastNotifiedPlaceId: Long? = null
+    private var lastNotifiedAtMs: Long = 0L
+
+    companion object {
+        private const val MIN_NOTIFY_INTERVAL_MS = 20_000L // 20s
+    }
 
     override fun onServiceConnected() {
         // Service is ready
@@ -30,43 +34,44 @@ class OrderWatchService : AccessibilityService() {
 
         scope.launch {
             val db = AppDatabase.get(this@OrderWatchService)
-            // NOTE: DAO function is getAll() (camelCase)
-            val places = db.places().getAll()
+            val places = db.places().getAll() // ← getALL -> getAll()
 
-            AddressMatcher.check(
+            // run the matcher
+            val match: MatchResult = AddressMatcher.check(
                 screenText = text,
                 places = places
-            )?.let { match ->
-                // Pass the service Context, not the CoroutineScope
-                AlertManager.notifyMatch(
-                    ctx = this@OrderWatchService,
-                    match = match
-                )
-            }
+            ) ?: return@launch
+
+            // debounce: same place too soon? skip
+            val now = System.currentTimeMillis()
+            val samePlace = (lastNotifiedPlaceId == match.place.id)
+            val tooSoon = (now - lastNotifiedAtMs) < MIN_NOTIFY_INTERVAL_MS
+            if (samePlace && tooSoon) return@launch
+
+            // record + notify
+            lastNotifiedPlaceId = match.place.id
+            lastNotifiedAtMs = now
+            AlertManager.notifyMatch(
+                ctx = this@OrderWatchService, // pass Context, not CoroutineScope
+                match = match
+            )
         }
     }
 
-    override fun onInterrupt() {
-        // No-op
-    }
+    override fun onInterrupt() { }
 
     override fun onDestroy() {
-        // Avoid leaks
         scope.cancel()
         super.onDestroy()
     }
 
     private fun collectText(node: AccessibilityNodeInfo): String {
         val sb = StringBuilder()
-
         fun dfs(n: AccessibilityNodeInfo?) {
             if (n == null) return
             n.text?.let { sb.append(it).append('\n') }
-            for (i in 0 until n.childCount) {
-                dfs(n.getChild(i))
-            }
+            for (i in 0 until n.childCount) dfs(n.getChild(i))
         }
-
         dfs(node)
         return sb.toString()
     }
