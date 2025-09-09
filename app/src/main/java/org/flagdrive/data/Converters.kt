@@ -3,16 +3,15 @@ package org.flagdrive.data
 import androidx.room.TypeConverter
 
 object Converters {
-    @TypeConverter
-    @JvmStatic
-    fun fromCsv(csv: String?): List<String> {
-        if (csv.isNullOrBlank()) return emptyList()
-        return csv.split(',').mapNotNull { it.trim().ifBlank { null } }
-    }
+    private const val SEP = "|||" // unlikely in real tags
 
     @TypeConverter
     @JvmStatic
-    fun toCsv(list: List<String>?): String {
-        return list?.joinToString(",") ?: ""
-    }
+    fun fromTags(list: List<String>?): String =
+        list?.joinToString(SEP) ?: ""
+
+    @TypeConverter
+    @JvmStatic
+    fun toTags(str: String?): List<String> =
+        (str ?: "").takeIf { it.isNotEmpty() }?.split(SEP)?.map { it.trim() } ?: emptyList()
 }

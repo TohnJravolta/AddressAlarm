@@ -1,40 +1,39 @@
 package org.flagdrive.ui
 
-import android.app.Application
-import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
-import org.flagdrive.data.AppDatabase
 import org.flagdrive.data.FlaggedPlace
+import org.flagdrive.data.PlacesRepository
 
-class PlacesViewModel(app: Application) : AndroidViewModel(app) {
-    private val db by lazy { AppDatabase.get(app) }
+class PlacesViewModel(
+    private val repo: PlacesRepository
+) : ViewModel() {
 
-    private val _places = MutableStateFlow<List<FlaggedPlace>>(emptyList())
-    val places: StateFlow<List<FlaggedPlace>> = _places
+    val places: StateFlow<List<FlaggedPlace>> =
+        repo.getAllFlow()
+            .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), emptyList<FlaggedPlace>())
 
-    init { refresh() }
-
-    fun refresh() = viewModelScope.launch(Dispatchers.IO) {
-        // 👇 rename to match the DAO
-        _places.value = db.places().getAll()
+    fun addOrUpdate(
+        rawAddress: String,
+        name: String? = null,
+        notes: String? = null,
+        tags: List<String> = emptyList()
+    ) {
+        viewModelScope.launch {
+            val existing = repo.findByAddressExact(rawAddress)
+            val toSave = (existing ?: FlaggedPlace(rawAddress = rawAddress))
+                .copy(name = name, notes = notes, tags = tags)
+            repo.upsert(toSave)
+        }
     }
 
-    fun delete(id: Long) = viewModelScope.launch(Dispatchers.IO) {
-        db.places().deleteById(id)
-        refresh()
+    fun remove(id: Long) {
+        viewModelScope.launch { repo.delete(id) }
     }
 
-    fun addSample() = viewModelScope.launch(Dispatchers.IO) {
-        val sample = FlaggedPlace(
-            rawAddress = "420 Beef Street, Ohio",
-            name = "Sample Diner",
-            tags = listOf("diner", "test")
-        )
-        db.places().upsert(sample)
-        refresh()
+    fun addSample() {
+        viewModelScope.launch { repo.addSample() }
     }
 }

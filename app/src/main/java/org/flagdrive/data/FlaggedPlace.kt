@@ -3,11 +3,11 @@ package org.flagdrive.data
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
-@Entity
+@Entity(tableName = "flagged_places")
 data class FlaggedPlace(
-    @PrimaryKey(autoGenerate = true) val id: Long = 0,
-    val rawAddress: String,
+    @PrimaryKey(autoGenerate = true) val id: Long = 0L,
     val name: String? = null,
-    // Stored as CSV by our TypeConverter
-    val tags: List<String> = emptyList()
+    val rawAddress: String,
+    val tags: List<String> = emptyList(),
+    val notes: String? = null
 )

@@ -1,28 +1,23 @@
 package org.flagdrive.data
 
-import androidx.room.Dao
-import androidx.room.Delete
-import androidx.room.Insert
-import androidx.room.OnConflictStrategy
-import androidx.room.Query
-import androidx.room.Update
+import androidx.room.*
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface FlaggedPlaceDao {
 
-    // 👇 use an always-present column for ordering
-    @Query("SELECT * FROM FlaggedPlace ORDER BY id DESC")
-    suspend fun getAll(): List<FlaggedPlace>
+    @Query("SELECT * FROM flagged_places ORDER BY id DESC")
+    fun getAllFlow(): Flow<List<FlaggedPlace>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun upsert(place: FlaggedPlace): Long
+    suspend fun insert(place: FlaggedPlace): Long
 
     @Update
     suspend fun update(place: FlaggedPlace)
 
-    @Delete
-    suspend fun delete(place: FlaggedPlace)
+    @Query("DELETE FROM flagged_places WHERE id = :id")
+    suspend fun delete(id: Long)
 
-    @Query("DELETE FROM FlaggedPlace WHERE id = :id")
-    suspend fun deleteById(id: Long)
+    @Query("SELECT * FROM flagged_places WHERE rawAddress = :address LIMIT 1")
+    suspend fun findByAddressExact(address: String): FlaggedPlace?
 }

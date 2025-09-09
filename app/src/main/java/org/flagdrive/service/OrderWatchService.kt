@@ -7,10 +7,12 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
+import kotlinx.coroutines.flow.first // Added import for .first()
 import kotlinx.coroutines.launch
-import org.flagdrive.data.AppDatabase
+// Removed import org.flagdrive.data.AppDatabase
+import org.flagdrive.di.ServiceLocator // Added import for ServiceLocator
 import org.flagdrive.match.AddressMatcher
-import org.flagdrive.match.MatchResult // ← unify on the match package
+import org.flagdrive.match.MatchResult
 
 class OrderWatchService : AccessibilityService() {
 
@@ -33,8 +35,9 @@ class OrderWatchService : AccessibilityService() {
         val text = collectText(root)
 
         scope.launch {
-            val db = AppDatabase.get(this@OrderWatchService)
-            val places = db.places().getAll() // ← getALL -> getAll()
+            // Updated to use ServiceLocator and repository
+            val repository = ServiceLocator.repository(applicationContext)
+            val places = repository.getAllFlow().first() // Get a snapshot of places
 
             // run the matcher
             val match: MatchResult = AddressMatcher.check(
@@ -52,7 +55,7 @@ class OrderWatchService : AccessibilityService() {
             lastNotifiedPlaceId = match.place.id
             lastNotifiedAtMs = now
             AlertManager.notifyMatch(
-                ctx = this@OrderWatchService, // pass Context, not CoroutineScope
+                ctx = this@OrderWatchService, // pass Context
                 match = match
             )
         }

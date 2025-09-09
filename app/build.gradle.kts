@@ -1,9 +1,11 @@
 plugins {
   id("com.android.application")
+  // kotlin("android") // Replaced by org.jetbrains.kotlin.android from previous state
   id("org.jetbrains.kotlin.android")
+  // kotlin("kapt") // Replaced by org.jetbrains.kotlin.kapt from previous state (or id("kotlin-kapt"))
+  id("kotlin-kapt")
   id("org.jetbrains.kotlin.plugin.compose")
   id("org.jetbrains.kotlin.plugin.serialization")
-  id("kotlin-kapt")
 }
 
 android {
@@ -37,10 +39,17 @@ android {
     buildConfig = true
   }
 
-  // ✅ Java toolchain for Java tasks
   compileOptions {
     sourceCompatibility = JavaVersion.VERSION_17
     targetCompatibility = JavaVersion.VERSION_17
+  }
+
+  kotlinOptions {
+    jvmTarget = "17"
+    // Corrected freeCompilerArgs to remove redundant Elvis operator
+    freeCompilerArgs = freeCompilerArgs
+      .filterNot { it.startsWith("-Xopt-in") }
+      .plus(listOf("-opt-in=kotlin.RequiresOptIn"))
   }
 
   packaging {
@@ -48,12 +57,13 @@ android {
   }
 }
 
-// ✅ Kotlin toolchain/JVM target so kapt matches Java 17
-tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
-  compilerOptions.jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_17)
-}
-
 dependencies {
+  val roomVersion = "2.6.1" // Defined room version
+
+  implementation("androidx.room:room-runtime:$roomVersion") // Added
+  implementation("androidx.room:room-ktx:$roomVersion") // Ensured version
+  kapt("androidx.room:room-compiler:$roomVersion") // Ensured version
+
   val composeBom = platform("androidx.compose:compose-bom:2024.06.00")
   implementation(composeBom)
   androidTestImplementation(composeBom)
@@ -69,9 +79,10 @@ dependencies {
   implementation("androidx.navigation:navigation-compose:2.8.0-beta05")
   implementation("androidx.datastore:datastore-preferences:1.1.1")
 
-  implementation("androidx.room:room-ktx:2.6.1")
-  kapt("androidx.room:room-compiler:2.6.1")
-
   implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.3")
   implementation("com.google.android.material:material:1.12.0")
+}
+
+kapt {
+  correctErrorTypes = true
 }
