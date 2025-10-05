@@ -4,7 +4,7 @@
 It runs **100% on-device**, watching for addresses through Accessibility, and alerts you when a location matches your personal "do-not-enter" or "use caution" list.
 
 ##  🚨 ***Test build label:*** The current pre-release APK installs under the launcher codename: **FlagDrive** 
-### You will see this name when granting permissions or enabling the accessibility service. The branding will switch to AddressAlarm in a future build.
+### You will see this name when granting permissions or enabling the accessibility service. The branding will switch to AddressAlarm in a future build. 🚨
 
 Originally designed with gig workers in mind, the tool now serves a much broader purpose — useful for **law enforcement, social workers, real estate agents, contractors, utility workers, and the general public** who want a personal safety layer for navigating locations.
 
