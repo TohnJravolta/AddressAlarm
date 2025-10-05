@@ -40,6 +40,10 @@ Originally designed with gig workers in mind, the tool now serves a much broader
 3. Let Gradle sync
 4. Build & Run on an Android device or emulator
 
+Additional guides are available in the [`docs/`](docs) directory:
+- [Overview](docs/OVERVIEW.md) – Project background and audience.
+- [Installation](docs/INSTALLATION.md) – Sideloading and setup walkthrough.
+
 ---
 
 ## 🛡️ Privacy & Safety
@@ -52,29 +56,21 @@ Originally designed with gig workers in mind, the tool now serves a much broader
 
 ## 🛠 Roadmap
 
-- [x] Basic address/name flagging
-- [x] Debounce & cooldown alerts
-- [ ] Fuzzy matching (e.g., Apt # variations)
-- [ ] Encrypted database storage
-- [ ] Voice/TTS alerts
-- [ ] F-Droid release
+See [ROADMAP.md](ROADMAP.md) for the full roadmap and upcoming milestones.
 
 ---
 
 ## 🤝 Contributing
 
-Contributions are welcome! Please:
-1. Fork the repo
-2. Create a feature branch
-3. Submit a Pull Request with a clear description/screenshots
+Read [CONTRIBUTING.md](CONTRIBUTING.md) for contribution guidelines, coding standards, and the pull-request process.
 
-Issues and suggestions can be filed in the [Issues tab](../../issues).
+Need help or have questions? Check out [SUPPORT.md](SUPPORT.md) for support options, including security reporting.
 
 ---
 
 ## 📜 License
 
-Licensed under the **GNU AGPL-3.0**.  
+Licensed under the **GNU AGPL-3.0**.
 Copyright (C) 2025 **TohnJravolta and AddressAlarm Contributors**.
 
 See the [LICENSE](LICENSE) file for details.
