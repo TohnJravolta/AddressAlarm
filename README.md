@@ -7,6 +7,8 @@ It runs **100% on-device**, watching for addresses through Accessibility, and al
 
 Originally designed with gig workers in mind, the tool now serves a much broader purpose — useful for **law enforcement, social workers, real estate agents, contractors, utility workers, and the general public** who want a personal safety layer for navigating locations.
 
+### Download it here: https://github.com/TohnJravolta/AddressAlarm/releases/tag/v0.1.42-alpha
+
 ---
 
 ## ✨ Features
