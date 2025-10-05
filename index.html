@@ -8,7 +8,298 @@
       name="description"
       content="AddressAlarm is an open-source Android accessibility companion that warns you about risky addresses from your personal watchlist."
     />
-    <link rel="stylesheet" href="styles.css" />
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=Lexend:wght@400;600;700&family=Press+Start+2P&display=swap');
+
+      :root {
+        --primary-glow: #00ff9d; /* A retro neon green */
+        --secondary-glow: #ff00c1; /* A retro neon pink */
+        --background: #121212; /* A deep, dark background */
+        --surface: #1e1e1e; /* A slightly lighter surface for cards */
+        --text: #e0e0e0; /* A light grey for body text */
+        --text-header: #ffffff;
+        --muted: #888888;
+        --max-width: 960px;
+        --border-radius: 8px;
+        --border-color: rgba(0, 255, 157, 0.3);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html {
+        scroll-behavior: smooth;
+      }
+
+      body {
+        margin: 0;
+        font-family: 'Lexend', sans-serif; /* Dyslexia-friendly font */
+        background: var(--background);
+        color: var(--text);
+        line-height: 1.8;
+        background-image: radial-gradient(var(--muted) 0.5px, transparent 0.5px);
+        background-size: 15px 15px;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+      }
+
+      a {
+        color: var(--primary-glow);
+        text-decoration: none;
+        transition: all 0.2s ease-in-out;
+      }
+
+      a:hover,
+      a:focus {
+        color: #fff;
+        text-shadow: 0 0 10px var(--primary-glow);
+      }
+
+      header {
+        background: rgba(18, 18, 18, 0.7);
+        backdrop-filter: blur(10px);
+        position: sticky;
+        top: 0;
+        z-index: 1000;
+        border-bottom: 1px solid var(--border-color);
+      }
+
+      .navbar {
+        max-width: var(--max-width);
+        margin: 0 auto;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0.75rem 1.5rem;
+      }
+
+      .navbar strong {
+        font-family: 'Press Start 2P', cursive; /* Retro pixel font */
+        font-size: 1rem;
+        color: var(--text-header);
+        text-shadow: 0 0 5px var(--primary-glow);
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+      }
+
+      #bouncing-logo {
+        display: inline-block;
+        animation: bounce 2s infinite ease-in-out;
+      }
+
+      @keyframes bounce {
+        0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+        40% { transform: translateY(-10px); }
+        60% { transform: translateY(-5px); }
+      }
+
+      .nav-links {
+        display: flex;
+        gap: 1.5rem;
+      }
+
+      .nav-links a {
+        font-family: 'Press Start 2P', cursive;
+        font-size: 0.8rem;
+        text-decoration: none;
+        color: var(--text);
+        transition: all 0.2s ease;
+      }
+
+      .nav-links a:hover,
+      .nav-links a:focus {
+        color: var(--primary-glow);
+        text-shadow: 0 0 8px var(--primary-glow);
+        text-decoration: none;
+      }
+
+      .hero {
+        padding: 6rem 1.5rem 5rem;
+        text-align: center;
+      }
+
+      .hero h1 {
+        font-family: 'Press Start 2P', cursive;
+        font-size: clamp(1.8rem, 5vw, 3rem);
+        color: var(--text-header);
+        text-shadow: 0 0 15px var(--primary-glow), 0 0 25px var(--primary-glow);
+        margin-bottom: 1.5rem;
+        line-height: 1.4;
+      }
+
+      .hero p {
+        max-width: 720px;
+        margin: 0 auto 2.5rem;
+        color: var(--text);
+        font-size: 1.1rem;
+      }
+
+      .small-print {
+        max-width: 640px;
+        margin: 1.5rem auto 0;
+        font-size: 0.9rem;
+        color: var(--muted);
+      }
+
+      .button {
+        display: inline-block;
+        padding: 1rem 2.5rem;
+        background: transparent;
+        color: var(--primary-glow);
+        border: 2px solid var(--primary-glow);
+        border-radius: var(--border-radius);
+        font-weight: 600;
+        font-family: 'Press Start 2P', cursive;
+        text-decoration: none;
+        box-shadow: 0 0 15px rgba(0, 255, 157, 0.3);
+        transition: all 0.2s ease;
+      }
+
+      .button:hover,
+      .button:focus {
+        background: var(--primary-glow);
+        color: var(--background);
+        box-shadow: 0 0 25px rgba(0, 255, 157, 0.6);
+        text-shadow: none;
+        transform: translateY(-3px);
+        text-decoration: none;
+      }
+
+      section {
+        padding: 5rem 1.5rem;
+        border-bottom: 1px solid var(--border-color);
+      }
+      section:last-of-type {
+          border-bottom: none;
+      }
+
+      .section-inner {
+        max-width: var(--max-width);
+        margin: 0 auto;
+      }
+
+      section h2 {
+          text-align: center;
+          font-family: 'Press Start 2P', cursive;
+          font-size: 2rem;
+          color: var(--text-header);
+          text-shadow: 0 0 10px var(--secondary-glow);
+          margin-bottom: 3rem;
+      }
+
+      .features-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 2rem;
+      }
+
+      .card {
+        background: var(--surface);
+        border-radius: var(--border-radius);
+        padding: 2rem;
+        border: 1px solid var(--border-color);
+        box-shadow: inset 0 0 15px rgba(0, 255, 157, 0.1), 0 0 5px rgba(0, 255, 157, 0.1);
+        transition: all 0.3s ease;
+      }
+
+      .card:hover {
+          transform: translateY(-5px) scale(1.02);
+          box-shadow: inset 0 0 20px rgba(0, 255, 157, 0.2), 0 0 15px rgba(0, 255, 157, 0.3);
+      }
+
+      .card h3 {
+        margin-top: 0;
+        font-size: 1.25rem;
+        color: var(--primary-glow);
+        font-family: 'Press Start 2P', cursive;
+        font-size: 1rem;
+      }
+
+      #how-it-works ol {
+          list-style: none;
+          padding-left: 0;
+          max-width: 600px;
+          margin: 2rem auto;
+      }
+
+      #how-it-works li {
+          position: relative;
+          padding: 1rem;
+          margin-bottom: 1.5rem;
+          border: 1px dashed var(--border-color);
+          border-radius: var(--border-radius);
+      }
+
+      .list-inline {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 1rem;
+        padding-left: 0;
+        list-style: none;
+        text-align: center;
+      }
+
+      .list-inline li {
+          background: var(--surface);
+          padding: 0.5rem 1rem;
+          border-radius: var(--border-radius);
+          border: 1px solid var(--border-color);
+          font-weight: 600;
+          color: var(--primary-glow);
+      }
+
+      .footer {
+        background: var(--background);
+        color: var(--muted);
+        text-align: center;
+        padding: 3rem 1.5rem;
+        border-top: 1px solid var(--border-color);
+      }
+
+      .footer a {
+        color: var(--primary-glow);
+      }
+
+      .footer p {
+          margin: 0.5rem 0;
+      }
+
+      .trail {
+          position: absolute;
+          height: 8px;
+          width: 8px;
+          border-radius: 4px;
+          background: var(--primary-glow);
+          pointer-events: none;
+          box-shadow: 0 0 10px var(--primary-glow);
+      }
+
+      #music-player button {
+        background: none;
+        border: 1px solid var(--muted);
+        color: var(--muted);
+        font-family: 'Press Start 2P', cursive;
+        font-size: 0.7rem;
+        cursor: pointer;
+        padding: 0.5rem 1rem;
+        transition: all 0.2s ease;
+      }
+
+      #music-player button:hover {
+        color: var(--primary-glow);
+        border-color: var(--primary-glow);
+        box-shadow: 0 0 10px var(--primary-glow);
+      }
+
+      @media (max-width: 768px) {
+        .nav-links {
+          display: none;
+        }
+      }
+    </style>
   </head>
   <body>
     <header>
@@ -159,6 +450,9 @@
     </main>
 
     <footer class="footer">
+      <div id="music-player">
+        <button id="play-music-btn" title="Toggle background music">[ Activate BGM ]</button>
+      </div>
       <p>
         Copyright &copy; 2025 TohnJravolta and AddressAlarm Contributors.
         Licensed under the <a href="LICENSE">GNU AGPL v3.0</a>.
@@ -169,6 +463,178 @@
         <a href="https://github.com/TohnJravolta/AAT" target="_blank" rel="noopener">View Source on GitHub</a>
       </p>
     </footer>
-    <script src="script.js" defer></script>
+    <script>
+      document.addEventListener('DOMContentLoaded', (event) => {
+          // --- Bouncing Logo ---
+          const bouncingLogo = document.getElementById('bouncing-logo');
+          if (bouncingLogo) {
+              console.log('Bouncing logo animation is active via CSS.');
+          }
+
+          // --- Smoother Mouse Trail Effect ---
+          const trails = [];
+          const numTrails = 15;
+          const trailLag = 1.8;
+
+          for (let i = 0; i < numTrails; i++) {
+              let trail = document.createElement('div');
+              trail.className = 'trail';
+              document.body.appendChild(trail);
+              trails.push({ el: trail, x: -20, y: -20 });
+          }
+
+          let mouseX = -20;
+          let mouseY = -20;
+
+          document.addEventListener('mousemove', function(e) {
+              mouseX = e.pageX;
+              mouseY = e.pageY;
+          });
+
+          function animateTrail() {
+              let prevX = mouseX;
+              let prevY = mouseY;
+
+              trails.forEach((p, i) => {
+                  const currentX = p.x;
+                  const currentY = p.y;
+
+                  p.x += (prevX - currentX) / trailLag;
+                  p.y += (prevY - currentY) / trailLag;
+
+                  p.el.style.left = p.x + 'px';
+                  p.el.style.top = p.y + 'px';
+                  p.el.style.transform = `scale(${(numTrails - i) / numTrails})`;
+
+                  prevX = currentX;
+                  prevY = currentY;
+              });
+
+              requestAnimationFrame(animateTrail);
+          }
+          animateTrail();
+
+          // --- Retro Chunk Effect (on click) ---
+          document.addEventListener('click', function(e) {
+              // Don't trigger chunk effect if the music button was clicked
+              if (e.target.id === 'play-music-btn') return;
+              for (let i = 0; i < 15; i++) {
+                  createChunk(e.clientX, e.clientY);
+              }
+          });
+
+          function createChunk(x, y) {
+              const chunk = document.createElement('div');
+              const size = Math.floor(Math.random() * 3 + 2) * 2; // Pixel-style sizes
+              const themeColors = ['#00ff9d', '#ff00c1'];
+              const color = themeColors[Math.floor(Math.random() * themeColors.length)];
+
+              chunk.style.position = 'fixed';
+              chunk.style.left = `${x}px`;
+              chunk.style.top = `${y}px`;
+              chunk.style.width = `${size}px`;
+              chunk.style.height = `${size}px`;
+              chunk.style.background = color;
+              chunk.style.boxShadow = `0 0 10px ${color}`;
+              chunk.style.pointerEvents = 'none';
+              chunk.style.zIndex = '9999';
+
+              document.body.appendChild(chunk);
+
+              const angle = Math.random() * Math.PI * 2;
+              const force = Math.random() * 8 + 4;
+              let vx = Math.cos(angle) * force;
+              let vy = Math.sin(angle) * force;
+              const gravity = 0.15;
+              const friction = 0.98;
+              let life = 0;
+              const duration = 60 + Math.random() * 40;
+
+              function animateChunk() {
+                  life++;
+                  if (life >= duration) {
+                      chunk.remove();
+                      return;
+                  }
+
+                  vx *= friction;
+                  vy *= friction;
+                  vy += gravity;
+
+                  chunk.style.left = `${parseFloat(chunk.style.left) + vx}px`;
+                  chunk.style.top = `${parseFloat(chunk.style.top) + vy}px`;
+                  chunk.style.opacity = 1 - (life / duration);
+                  requestAnimationFrame(animateChunk);
+              }
+
+              animateChunk();
+          }
+
+          // --- Procedural Chiptune Music Generator ---
+          let audioCtx;
+          let isPlaying = false;
+          let sequenceTimeout;
+          let noteIndex = 0;
+
+          const melody = [
+            { freq: 261.63, dur: 150 }, { freq: 329.63, dur: 150 }, { freq: 392.00, dur: 150 }, { freq: 523.25, dur: 300 }, { freq: 0, dur: 50 },
+            { freq: 392.00, dur: 150 }, { freq: 523.25, dur: 150 }, { freq: 392.00, dur: 150 }, { freq: 329.63, dur: 300 }, { freq: 0, dur: 200 },
+            { freq: 293.66, dur: 150 }, { freq: 349.23, dur: 150 }, { freq: 440.00, dur: 150 }, { freq: 587.33, dur: 300 }, { freq: 0, dur: 50 },
+            { freq: 440.00, dur: 150 }, { freq: 587.33, dur: 150 }, { freq: 440.00, dur: 150 }, { freq: 349.23, dur: 300 }, { freq: 0, dur: 200 },
+          ];
+
+          function playSequence() {
+              if (!isPlaying || !audioCtx) return;
+
+              const note = melody[noteIndex];
+              const noteDurationSec = note.dur / 1000;
+
+              if (note.freq > 0) {
+                  const oscillator = audioCtx.createOscillator();
+                  const gainNode = audioCtx.createGain();
+
+                  oscillator.type = 'square';
+                  oscillator.frequency.setValueAtTime(note.freq, audioCtx.currentTime);
+
+                  gainNode.gain.setValueAtTime(0, audioCtx.currentTime);
+                  gainNode.gain.linearRampToValueAtTime(0.1, audioCtx.currentTime + 0.01);
+                  gainNode.gain.setValueAtTime(0.1, audioCtx.currentTime + noteDurationSec * 0.5);
+                  gainNode.gain.linearRampToValueAtTime(0, audioCtx.currentTime + noteDurationSec);
+
+                  oscillator.connect(gainNode);
+                  gainNode.connect(audioCtx.destination);
+                  oscillator.start(audioCtx.currentTime);
+                  oscillator.stop(audioCtx.currentTime + noteDurationSec);
+              }
+
+              noteIndex = (noteIndex + 1) % melody.length;
+              sequenceTimeout = setTimeout(playSequence, note.dur);
+          }
+
+          const playBtn = document.getElementById('play-music-btn');
+          if (playBtn) {
+              playBtn.addEventListener('click', () => {
+                  if (!audioCtx) {
+                      audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                  }
+
+                  if (audioCtx.state === 'suspended') {
+                      audioCtx.resume();
+                  }
+
+                  if (!isPlaying) {
+                      isPlaying = true;
+                      noteIndex = 0;
+                      playSequence();
+                      playBtn.textContent = '[ Deactivate BGM ]';
+                  } else {
+                      isPlaying = false;
+                      clearTimeout(sequenceTimeout);
+                      playBtn.textContent = '[ Activate BGM ]';
+                  }
+              });
+          }
+      });
+    </script>
   </body>
 </html>
