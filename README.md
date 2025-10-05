@@ -1,7 +1,9 @@
 # AddressAlarm 🚨
 
-**AddressAlarm** is an open-source Android app that helps anyone flag and avoid risky, curious or problematic addresses.  
+**AddressAlarm** is an open-source Android app that helps anyone flag and avoid risky, curious or problematic addresses.
 It runs **100% on-device**, watching for addresses through Accessibility, and alerts you when a location matches your personal "do-not-enter" or "use caution" list.
+
+> **Test build label:** The current pre-release APK installs under the launcher name **FlagDrive**. You will see this name when granting permissions or enabling the accessibility service. The branding will switch to AddressAlarm in a future build.
 
 Originally designed with gig workers in mind, the tool now serves a much broader purpose — useful for **law enforcement, social workers, real estate agents, contractors, utility workers, and the general public** who want a personal safety layer for navigating locations.
 
@@ -41,8 +43,8 @@ Originally designed with gig workers in mind, the tool now serves a much broader
 4. Build & Run on an Android device or emulator
 
 Additional guides are available in the [`docs/`](docs) directory:
-- [Overview](docs/OVERVIEW.md) – Project background and audience.
-- [Installation](docs/INSTALLATION.md) – Sideloading and setup walkthrough.
+- [Overview](docs/OVERVIEW.md) – Project background and audience (also notes the temporary FlagDrive label).
+- [Installation](docs/INSTALLATION.md) – Sideloading, accessibility walkthroughs for Pixel/Samsung, and other setup details.
 
 ---
 

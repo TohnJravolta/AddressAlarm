@@ -18,5 +18,7 @@ AddressAlarm is an Android accessibility companion that keeps a private, on-devi
 ## Project status
 AddressAlarm is under active development. The foundational alerting pipeline is in place, and the next milestones focus on fuzzy matching improvements, encrypted storage, voice feedback, and broader distribution.
 
+> **Naming note:** Until the production branding lands, the Android launcher icon and accessibility service appear as **FlagDrive**. This is the same AddressAlarm codebase and will be renamed in a later release.
+
 For installation and setup guidance, see [docs/INSTALLATION.md](./INSTALLATION.md).
 For upcoming work, review the [ROADMAP](../ROADMAP.md).

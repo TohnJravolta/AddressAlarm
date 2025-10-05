@@ -40,11 +40,18 @@ This document describes how to produce a signed release APK, verify it, and prep
 2. Tag the release with `v<MAJOR.MINOR.PATCH>` and point it to the `main` branch commit.
 3. Paste the changelog entry into the release notes.
 4. Upload the signed APK and any supplemental assets (screenshots, checksum file).
-5. Publish the release.
+5. Call out in the release notes that the build currently installs under the launcher name **FlagDrive** and link to the accessibility enablement walkthrough in `docs/INSTALLATION.md`.
+6. Publish the release.
 
 ## 6. Update the website
 1. Edit `docs/index.html` to point the **Download APK** button to the new release asset URL.
 2. Update any version-specific copy.
 3. Commit and push changes so GitHub Pages serves the latest content.
+
+## 7. QA device setup instructions
+1. Smoke-test the release APK on at least one Google Pixel (Android 14 or 13) and one Samsung Galaxy (One UI 6 or 5).
+2. Follow the accessibility enablement instructions in `docs/INSTALLATION.md` to confirm wording and screenshots still match reality.
+3. Verify that system dialogs present the temporary **FlagDrive (AddressAlarm)** name so users can find the correct service.
+4. If OEMs change menu labels, update the installation guide before publishing the release.
 
 Following this checklist ensures each AddressAlarm release is reproducible, verifiable, and accompanied by the information users need to trust the download.
