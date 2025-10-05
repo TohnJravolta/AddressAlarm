@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>AddressAlarm – On-device safety alerts for risky addresses</title>
+    <meta
+      name="description"
+      content="AddressAlarm is an open-source Android accessibility companion that warns you about risky addresses from your personal watchlist."
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header>
+      <nav class="navbar">
+        <strong><span id="bouncing-logo" role="img" aria-label="Alarm emoji">🚨</span> AddressAlarm</strong>
+        <div class="nav-links">
+          <a href="#who-is-it-for">Who It's For</a>
+          <a href="#features">Features</a>
+          <a href="#how-it-works">How It Works</a>
+          <a href="#download">Download</a>
+          <a href="#roadmap">Roadmap</a>
+          <a href="https://github.com/TohnJravolta/AAT" target="_blank" rel="noopener">GitHub</a>
+        </div>
+      </nav>
+    </header>
+
+    <main>
+      <section class="hero">
+        <h1>A personal safety layer for any address.</h1>
+        <p>
+          AddressAlarm is a free, open-source Android app that runs 100% on-device. It watches for addresses you've flagged and alerts you discreetly, helping you avoid risky, curious, or problematic locations before you commit.
+        </p>
+        <a class="button" href="https://github.com/TohnJravolta/AddressAlarm/releases/tag/v0.1.42-alpha" target="_blank" rel="noopener">
+          Download the Latest APK
+        </a>
+        <p class="small-print">
+          Current test build installs as <strong>FlagDrive</strong>. This is normal! The official name will be used in a future release.
+          <br>Follow the <a href="docs/INSTALLATION.md">full installation guide</a> for setup help.
+        </p>
+      </section>
+
+      <section id="who-is-it-for">
+        <div class="section-inner">
+          <h2>An essential tool for professionals and public</h2>
+          <p>Originally built for gig workers, AddressAlarm is now a vital tool for anyone who navigates unfamiliar locations.</p>
+          <div class="features-grid">
+            <div class="card">
+              <h3>📦 Gig &amp; Delivery Drivers</h3>
+              <p>Keep a private log of difficult drop-offs, unsafe areas, or buildings with access codes.</p>
+            </div>
+            <div class="card">
+              <h3>👮 Law Enforcement &amp; Social Workers</h3>
+              <p>Get a heads-up when approaching a location with a known history of hostility or special circumstances.</p>
+            </div>
+            <div class="card">
+              <h3>🏡 Real Estate &amp; Contractors</h3>
+              <p>Tag properties with notes about access, hazards, or client-specific information for your entire team.</p>
+            </div>
+            <div class="card">
+              <h3>🙋‍♀️ The General Public</h3>
+              <p>A simple, private way to remember addresses you'd rather avoid for any reason.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="features" class="alternate-bg">
+        <div class="section-inner">
+          <h2>Everything you need to stay aware</h2>
+          <div class="features-grid">
+            <div class="card">
+              <h3>🔒 Private &amp; Offline-First</h3>
+              <p>All address matching happens locally. No data ever leaves your device. No servers, no tracking, period.</p>
+            </div>
+            <div class="card">
+              <h3>🏷️ Custom Flags &amp; Tags</h3>
+              <p>Organize your watchlist with tags like "unsafe pet," "hostile," or "use back entrance" so you have context in the moment.</p>
+            </div>
+            <div class="card">
+              <h3>🧠 Smart, Debounced Alerts</h3>
+              <p>Notifications are rate-limited to prevent alert fatigue. The overlay is clear, simple, and designed for at-a-glance safety.</p>
+            </div>
+            <div class="card">
+              <h3>📲 Per-App Visibility</h3>
+              <p>You choose exactly which apps AddressAlarm should monitor. It stays dormant until an app you've enabled is in the foreground.</p>
+            </div>
+            <div class="card">
+              <h3>↔️ Import &amp; Export</h3>
+              <p>Easily back up your flagged addresses or share your watchlist with trusted friends and colleagues.</p>
+            </div>
+             <div class="card">
+              <h3>✅ You're In Control</h3>
+              <p>This tool is a memory aid, not automation. It gives you information so you can make the final choice. It never auto-declines or accepts jobs.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="how-it-works">
+        <div class="section-inner">
+          <h2>Getting Started is Simple</h2>
+          <ol>
+            <li><strong>Download the APK</strong> from the latest GitHub release.</li>
+            <li><strong>Install the app</strong> and enable the "FlagDrive" accessibility service in your phone's settings.</li>
+            <li><strong>Build your watchlist</strong> by adding addresses, notes, and tags.</li>
+            <li><strong>Select which apps to monitor</strong> (e.g., Google Maps, Uber Driver).</li>
+            <li><strong>Get alerted!</strong> When a flagged address appears in a monitored app, a warning overlay will appear.</li>
+          </ol>
+          <p>
+            Need a hand? Our detailed <a href="docs/INSTALLATION.md">Installation Guide</a> has step-by-step walkthroughs for Pixel, Samsung, and other devices.
+          </p>
+        </div>
+      </section>
+
+      <section id="download" class="alternate-bg">
+        <div class="section-inner" style="text-align: center;">
+            <h2>Download AddressAlarm</h2>
+            <p>The app is free, open-source, and ready to install.</p>
+            <a class="button" href="https://github.com/TohnJravolta/AddressAlarm/releases/tag/v0.1.42-alpha" target="_blank" rel="noopener">
+              Download v0.1.42-alpha
+            </a>
+            <p class="small-print">Requires Android 8.0 (Oreo) or newer.</p>
+        </div>
+      </section>
+
+      <section id="roadmap">
+        <div class="section-inner">
+          <h2>What’s Next?</h2>
+          <p>AddressAlarm is actively developed. Here are some of the major features planned for the future:</p>
+          <ul class="list-inline">
+            <li>Fuzzy address matching (e.g., "Apt 4B" vs "Unit 4B")</li>
+            <li>Encrypted on-device storage</li>
+            <li>Optional voice and TTS alerts</li>
+            <li>In-app onboarding tour for new users</li>
+            <li>Distribution via F-Droid</li>
+          </ul>
+          <p>
+            See the <a href="ROADMAP.md">full roadmap</a> for more, or suggest a feature on
+            <a href="https://github.com/TohnJravolta/AAT/issues" target="_blank" rel="noopener">GitHub</a>.
+          </p>
+        </div>
+      </section>
+
+      <section id="developers" class="alternate-bg">
+        <div class="section-inner">
+          <h2>For Developers &amp; Contributors</h2>
+          <p>
+            AddressAlarm is a community-driven, FOSS project licensed under AGPL-3.0. We welcome contributors of all levels.
+            Check out the source code, review our coding standards, and help us build the future of on-device safety tools.
+          </p>
+          <p>
+            <a href="CONTRIBUTING.md">Contributing Guide</a> &bull;
+            <a href="SECURITY.md">Security Policy</a> &bull;
+            <a href="SUPPORT.md">Support Channels</a>
+          </p>
+        </div>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <p>
+        Copyright &copy; 2025 TohnJravolta and AddressAlarm Contributors.
+        Licensed under the <a href="LICENSE">GNU AGPL v3.0</a>.
+      </p>
+      <p>
+        <a href="PRIVACY_POLICY.md">Privacy Policy</a> &bull;
+        <a href="TERMS.md">Terms of Use</a> &bull;
+        <a href="https://github.com/TohnJravolta/AAT" target="_blank" rel="noopener">View Source on GitHub</a>
+      </p>
+    </footer>
+    <script src="script.js" defer></script>
+  </body>
+</html>
