@@ -72,6 +72,7 @@
         align-items: center;
         justify-content: space-between;
         padding: 0.75rem 1.5rem;
+        gap: 2rem; /* Increased gap */
       }
 
       .navbar strong {
@@ -294,9 +295,50 @@
         box-shadow: 0 0 10px var(--primary-glow);
       }
 
+      /* --- Tooltip Styles --- */
+      .tooltip {
+        position: relative;
+        cursor: help;
+        border-bottom: 1px dashed var(--primary-glow);
+        text-decoration: none;
+        color: inherit;
+      }
+      .tooltip:hover {
+        text-decoration: none;
+      }
+      .tooltip .tooltip-text {
+        visibility: hidden;
+        width: 220px;
+        background-color: var(--surface);
+        color: var(--text);
+        text-align: center;
+        border-radius: var(--border-radius);
+        padding: 10px;
+        position: absolute;
+        z-index: 10;
+        bottom: 140%;
+        left: 50%;
+        margin-left: -110px;
+        opacity: 0;
+        transition: opacity 0.3s;
+        border: 1px solid var(--border-color);
+        box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        pointer-events: none;
+      }
+      .tooltip:hover .tooltip-text {
+        visibility: visible;
+        opacity: 1;
+      }
+
       @media (max-width: 768px) {
+        .navbar {
+          flex-direction: column;
+          gap: 1.5rem;
+        }
         .nav-links {
-          display: none;
+          flex-wrap: wrap;
+          justify-content: center;
+          gap: 1rem 1.5rem;
         }
       }
     </style>
@@ -304,7 +346,7 @@
   <body>
     <header>
       <nav class="navbar">
-        <strong><span id="bouncing-logo" role="img" aria-label="Alarm emoji">🚨</span> AddressAlarm</strong>
+        <strong><span id="bouncing-logo" role="img" aria-label="Alarm emojis">🚨 AddressAlarm 🚨</span></strong>
         <div class="nav-links">
           <a href="#who-is-it-for">Who It's For</a>
           <a href="#features">Features</a>
@@ -320,7 +362,7 @@
       <section class="hero">
         <h1>A personal safety layer for any address.</h1>
         <p>
-          AddressAlarm is a free, open-source Android app that runs 100% on-device. It watches for addresses you've flagged and alerts you discreetly, helping you avoid risky, curious, or problematic locations before you commit.
+          AddressAlarm is a free, <a href="#open-source" class="tooltip">open-source<span class="tooltip-text">The app's code is public and can be reviewed by anyone. Click to learn more.</span></a> Android app that runs 100% on-device. It watches for addresses you've flagged and alerts you discreetly, helping you avoid risky, curious, or problematic locations before you commit.
         </p>
         <a class="button" href="https://github.com/TohnJravolta/AddressAlarm/releases/tag/v0.1.42-alpha" target="_blank" rel="noopener">
           Download the Latest APK
@@ -407,7 +449,7 @@
       <section id="download" class="alternate-bg">
         <div class="section-inner" style="text-align: center;">
             <h2>Download AddressAlarm</h2>
-            <p>The app is free, open-source, and ready to install.</p>
+            <p>The app is free, <a href="#open-source" class="tooltip">open-source<span class="tooltip-text">The app's code is public and can be reviewed by anyone. Click to learn more.</span></a>, and ready to install.</p>
             <a class="button" href="https://github.com/TohnJravolta/AddressAlarm/releases/tag/v0.1.42-alpha" target="_blank" rel="noopener">
               Download v0.1.42-alpha
             </a>
@@ -433,11 +475,34 @@
         </div>
       </section>
 
+      <section id="open-source">
+        <div class="section-inner">
+          <h2>What is Open Source?</h2>
+          <p style="text-align: center; max-width: 720px; margin-left: auto; margin-right: auto;">
+            AddressAlarm is a <span class="tooltip">FOSS<span class="tooltip-text">Free and Open Source Software</span></span> project. That means it's more than just free of charge—it's built on a foundation of freedom, transparency, and community.
+          </p>
+          <div class="features-grid" style="margin-top: 3rem;">
+            <div class="card">
+              <h3>📖 The Source is Open</h3>
+              <p>The "source code"—the human-readable instructions that make the app work—is available for anyone to see, study, and verify. There are no hidden agendas. You can see exactly how AddressAlarm protects your data because the code is public on GitHub.</p>
+            </div>
+            <div class="card">
+              <h3>🤝 Freedom &amp; Collaboration</h3>
+              <p>You have the freedom to use the software for any purpose and even modify it. This encourages a global community of developers and users to work together, share improvements, and make the tool better for everyone.</p>
+            </div>
+            <div class="card">
+              <h3>💖 Community Supported</h3>
+              <p>This project is not owned by a corporation. It's built and maintained by volunteers and is funded entirely by user donations. This ensures the project's goals will always stay aligned with the users' best interests: privacy, security, and safety.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
       <section id="developers" class="alternate-bg">
         <div class="section-inner">
           <h2>For Developers &amp; Contributors</h2>
           <p>
-            AddressAlarm is a community-driven, FOSS project licensed under AGPL-3.0. We welcome contributors of all levels.
+            AddressAlarm is a community-driven, <a href="#open-source" class="tooltip">FOSS<span class="tooltip-text">Free and Open Source Software. Click to learn more.</span></a> project licensed under AGPL-3.0. We welcome contributors of all levels.
             Check out the source code, review our coding standards, and help us build the future of on-device safety tools.
           </p>
           <p>
@@ -464,177 +529,222 @@
       </p>
     </footer>
     <script>
-      document.addEventListener('DOMContentLoaded', (event) => {
-          // --- Bouncing Logo ---
-          const bouncingLogo = document.getElementById('bouncing-logo');
-          if (bouncingLogo) {
-              console.log('Bouncing logo animation is active via CSS.');
-          }
+    document.addEventListener('DOMContentLoaded', (event) => {
+        // --- Visual Effects ---
+        const initVisuals = () => {
+            const bouncingLogo = document.getElementById('bouncing-logo');
+            if (bouncingLogo) console.log('Bouncing logo animation is active via CSS.');
 
-          // --- Smoother Mouse Trail Effect ---
-          const trails = [];
-          const numTrails = 15;
-          const trailLag = 1.8;
+            const trails = [];
+            const numTrails = 15;
+            const trailLag = 1.8;
+            for (let i = 0; i < numTrails; i++) {
+                let trail = document.createElement('div');
+                trail.className = 'trail';
+                document.body.appendChild(trail);
+                trails.push({ el: trail, x: -20, y: -20 });
+            }
+            let mouseX = -20, mouseY = -20;
+            document.addEventListener('mousemove', e => {
+                mouseX = e.pageX;
+                mouseY = e.pageY;
+            });
+            const animateTrail = () => {
+                let prevX = mouseX, prevY = mouseY;
+                trails.forEach(p => {
+                    const currentX = p.x, currentY = p.y;
+                    p.x += (prevX - currentX) / trailLag;
+                    p.y += (prevY - currentY) / trailLag;
+                    p.el.style.left = p.x + 'px';
+                    p.el.style.top = p.y + 'px';
+                    prevX = currentX;
+                    prevY = currentY;
+                });
+                requestAnimationFrame(animateTrail);
+            };
+            animateTrail();
+        };
+        initVisuals();
 
-          for (let i = 0; i < numTrails; i++) {
-              let trail = document.createElement('div');
-              trail.className = 'trail';
-              document.body.appendChild(trail);
-              trails.push({ el: trail, x: -20, y: -20 });
-          }
+        // --- Interactive Music Engine ---
+        const musicEngine = {
+            audioCtx: null,
+            isPlaying: false,
+            phase: 0,
+            tempo: 120,
+            beat: 0,
+            nextNoteTime: 0.0,
+            scheduleAheadTime: 0.1,
+            lookahead: 25.0,
+            timerID: null,
+            mousePos: { x: 0.5, y: 0.5 },
+            scale: [261.63, 293.66, 329.63, 392.00, 440.00, 523.25, 587.33], // C Major scale
 
-          let mouseX = -20;
-          let mouseY = -20;
+            patterns: {
+                kick: [1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0],
+                hat: [0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0],
+                bass: [1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0],
+                arp1: [1, 0, 1, 0, 1, 0, 1, 1, 1, 0, 1, 0, 1, 0, 1, 0],
+                arp2: [1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 1, 0],
+            },
 
-          document.addEventListener('mousemove', function(e) {
-              mouseX = e.pageX;
-              mouseY = e.pageY;
-          });
+            init() {
+                document.getElementById('play-music-btn').addEventListener('click', () => this.toggle());
+                document.addEventListener('mousemove', e => {
+                    this.mousePos.x = e.clientX / window.innerWidth;
+                    this.mousePos.y = e.clientY / window.innerHeight;
+                });
+                document.body.addEventListener('click', e => {
+                    if (this.isPlaying && e.target.id !== 'play-music-btn') {
+                        this.phase = (this.phase + 1) % 6;
+                        this.playEcho();
+                    }
+                });
+            },
 
-          function animateTrail() {
-              let prevX = mouseX;
-              let prevY = mouseY;
+            toggle() {
+                if (!this.audioCtx) {
+                    this.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                }
+                if (this.audioCtx.state === 'suspended') {
+                    this.audioCtx.resume();
+                }
+                this.isPlaying = !this.isPlaying;
+                const playBtn = document.getElementById('play-music-btn');
+                if (this.isPlaying) {
+                    this.beat = 0;
+                    this.nextNoteTime = this.audioCtx.currentTime;
+                    this.scheduler();
+                    this.timerID = setInterval(() => this.scheduler(), this.lookahead);
+                    playBtn.textContent = '[ BGM Active ]';
+                } else {
+                    clearInterval(this.timerID);
+                    playBtn.textContent = '[ Activate BGM ]';
+                }
+            },
 
-              trails.forEach((p, i) => {
-                  const currentX = p.x;
-                  const currentY = p.y;
+            scheduler() {
+                while (this.nextNoteTime < this.audioCtx.currentTime + this.scheduleAheadTime) {
+                    this.scheduleNote(this.beat, this.nextNoteTime);
+                    this.nextNoteTime += 60.0 / this.tempo / 4; // 16th notes
+                    this.beat = (this.beat + 1) % 16;
+                }
+            },
 
-                  p.x += (prevX - currentX) / trailLag;
-                  p.y += (prevY - currentY) / trailLag;
+            scheduleNote(beat, time) {
+                if (this.phase >= 0 && this.patterns.kick[beat]) this.playKick(time);
+                if (this.phase >= 1 && this.patterns.hat[beat]) this.playHat(time);
+                if (this.phase >= 2 && this.patterns.bass[beat]) this.playBass(time, beat);
+                if (this.phase >= 3 && this.patterns.arp1[beat]) this.playArp(time, 1);
+                if (this.phase >= 4 && this.patterns.arp2[beat]) this.playArp(time, 2);
+                if (this.phase >= 5) this.updateFilter(time);
+            },
 
-                  p.el.style.left = p.x + 'px';
-                  p.el.style.top = p.y + 'px';
-                  p.el.style.transform = `scale(${(numTrails - i) / numTrails})`;
+            playKick(time) {
+                const osc = this.audioCtx.createOscillator();
+                const gain = this.audioCtx.createGain();
+                osc.frequency.setValueAtTime(150, time);
+                osc.frequency.exponentialRampToValueAtTime(0.01, time + 0.5);
+                gain.gain.setValueAtTime(1, time);
+                gain.gain.exponentialRampToValueAtTime(0.01, time + 0.5);
+                osc.connect(gain);
+                gain.connect(this.audioCtx.destination);
+                osc.start(time);
+                osc.stop(time + 0.5);
+            },
 
-                  prevX = currentX;
-                  prevY = currentY;
-              });
+            playHat(time) {
+                const bufferSize = this.audioCtx.sampleRate * 0.1;
+                const buffer = this.audioCtx.createBuffer(1, bufferSize, this.audioCtx.sampleRate);
+                const output = buffer.getChannelData(0);
+                for (let i = 0; i < bufferSize; i++) output[i] = Math.random() * 2 - 1;
+                const noise = this.audioCtx.createBufferSource();
+                noise.buffer = buffer;
+                const filter = this.audioCtx.createBiquadFilter();
+                filter.type = 'highpass';
+                filter.frequency.value = 10000;
+                const gain = this.audioCtx.createGain();
+                gain.gain.setValueAtTime(0.2, time);
+                gain.gain.exponentialRampToValueAtTime(0.01, time + 0.1);
+                noise.connect(filter);
+                filter.connect(gain);
+                gain.connect(this.audioCtx.destination);
+                noise.start(time);
+                noise.stop(time + 0.1);
+            },
 
-              requestAnimationFrame(animateTrail);
-          }
-          animateTrail();
+            playBass(time, beat) {
+                const osc = this.audioCtx.createOscillator();
+                osc.type = 'sawtooth';
+                const freq = this.scale[beat % 4] / 2; // Simple bassline from scale
+                osc.frequency.setValueAtTime(freq, time);
+                const gain = this.audioCtx.createGain();
+                gain.gain.setValueAtTime(0.3, time);
+                gain.gain.exponentialRampToValueAtTime(0.01, time + 0.2);
+                const filter = this.audioCtx.createBiquadFilter();
+                filter.type = 'lowpass';
+                filter.frequency.value = 400;
+                osc.connect(filter);
+                filter.connect(gain);
+                gain.connect(this.audioCtx.destination);
+                osc.start(time);
+                osc.stop(time + 0.2);
+            },
 
-          // --- Retro Chunk Effect (on click) ---
-          document.addEventListener('click', function(e) {
-              // Don't trigger chunk effect if the music button was clicked
-              if (e.target.id === 'play-music-btn') return;
-              for (let i = 0; i < 15; i++) {
-                  createChunk(e.clientX, e.clientY);
-              }
-          });
+            playArp(time, octave) {
+                const osc = this.audioCtx.createOscillator();
+                osc.type = 'square';
+                const noteIndex = Math.floor(this.mousePos.y * this.scale.length);
+                const freq = this.scale[noteIndex] * octave;
+                osc.frequency.setValueAtTime(freq, time);
 
-          function createChunk(x, y) {
-              const chunk = document.createElement('div');
-              const size = Math.floor(Math.random() * 3 + 2) * 2; // Pixel-style sizes
-              const themeColors = ['#00ff9d', '#ff00c1'];
-              const color = themeColors[Math.floor(Math.random() * themeColors.length)];
+                const gain = this.audioCtx.createGain();
+                gain.gain.setValueAtTime(0.15, time);
+                gain.gain.exponentialRampToValueAtTime(0.01, time + 0.1);
 
-              chunk.style.position = 'fixed';
-              chunk.style.left = `${x}px`;
-              chunk.style.top = `${y}px`;
-              chunk.style.width = `${size}px`;
-              chunk.style.height = `${size}px`;
-              chunk.style.background = color;
-              chunk.style.boxShadow = `0 0 10px ${color}`;
-              chunk.style.pointerEvents = 'none';
-              chunk.style.zIndex = '9999';
+                const filter = this.audioCtx.createBiquadFilter();
+                filter.type = 'lowpass';
+                filter.frequency.value = 800 + (this.mousePos.x * 2000); // Mouse X controls filter
 
-              document.body.appendChild(chunk);
+                const delay = this.audioCtx.createDelay();
+                delay.delayTime.value = (60.0 / this.tempo) * 0.75; // Dotted 8th note delay
+                const feedback = this.audioCtx.createGain();
+                feedback.gain.value = 0.4;
 
-              const angle = Math.random() * Math.PI * 2;
-              const force = Math.random() * 8 + 4;
-              let vx = Math.cos(angle) * force;
-              let vy = Math.sin(angle) * force;
-              const gravity = 0.15;
-              const friction = 0.98;
-              let life = 0;
-              const duration = 60 + Math.random() * 40;
+                osc.connect(filter);
+                filter.connect(gain);
+                gain.connect(delay);
+                delay.connect(feedback);
+                feedback.connect(delay);
+                gain.connect(this.audioCtx.destination);
+                feedback.connect(this.audioCtx.destination);
 
-              function animateChunk() {
-                  life++;
-                  if (life >= duration) {
-                      chunk.remove();
-                      return;
-                  }
+                osc.start(time);
+                osc.stop(time + 0.1);
+            },
 
-                  vx *= friction;
-                  vy *= friction;
-                  vy += gravity;
+            updateFilter(time) {
+                // This could be used for a global filter sweep in phase 5/6
+                // For now, mouse X control on the arp filter is sufficient
+            },
 
-                  chunk.style.left = `${parseFloat(chunk.style.left) + vx}px`;
-                  chunk.style.top = `${parseFloat(chunk.style.top) + vy}px`;
-                  chunk.style.opacity = 1 - (life / duration);
-                  requestAnimationFrame(animateChunk);
-              }
-
-              animateChunk();
-          }
-
-          // --- Procedural Chiptune Music Generator ---
-          let audioCtx;
-          let isPlaying = false;
-          let sequenceTimeout;
-          let noteIndex = 0;
-
-          const melody = [
-            { freq: 261.63, dur: 150 }, { freq: 329.63, dur: 150 }, { freq: 392.00, dur: 150 }, { freq: 523.25, dur: 300 }, { freq: 0, dur: 50 },
-            { freq: 392.00, dur: 150 }, { freq: 523.25, dur: 150 }, { freq: 392.00, dur: 150 }, { freq: 329.63, dur: 300 }, { freq: 0, dur: 200 },
-            { freq: 293.66, dur: 150 }, { freq: 349.23, dur: 150 }, { freq: 440.00, dur: 150 }, { freq: 587.33, dur: 300 }, { freq: 0, dur: 50 },
-            { freq: 440.00, dur: 150 }, { freq: 587.33, dur: 150 }, { freq: 440.00, dur: 150 }, { freq: 349.23, dur: 300 }, { freq: 0, dur: 200 },
-          ];
-
-          function playSequence() {
-              if (!isPlaying || !audioCtx) return;
-
-              const note = melody[noteIndex];
-              const noteDurationSec = note.dur / 1000;
-
-              if (note.freq > 0) {
-                  const oscillator = audioCtx.createOscillator();
-                  const gainNode = audioCtx.createGain();
-
-                  oscillator.type = 'square';
-                  oscillator.frequency.setValueAtTime(note.freq, audioCtx.currentTime);
-
-                  gainNode.gain.setValueAtTime(0, audioCtx.currentTime);
-                  gainNode.gain.linearRampToValueAtTime(0.1, audioCtx.currentTime + 0.01);
-                  gainNode.gain.setValueAtTime(0.1, audioCtx.currentTime + noteDurationSec * 0.5);
-                  gainNode.gain.linearRampToValueAtTime(0, audioCtx.currentTime + noteDurationSec);
-
-                  oscillator.connect(gainNode);
-                  gainNode.connect(audioCtx.destination);
-                  oscillator.start(audioCtx.currentTime);
-                  oscillator.stop(audioCtx.currentTime + noteDurationSec);
-              }
-
-              noteIndex = (noteIndex + 1) % melody.length;
-              sequenceTimeout = setTimeout(playSequence, note.dur);
-          }
-
-          const playBtn = document.getElementById('play-music-btn');
-          if (playBtn) {
-              playBtn.addEventListener('click', () => {
-                  if (!audioCtx) {
-                      audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-                  }
-
-                  if (audioCtx.state === 'suspended') {
-                      audioCtx.resume();
-                  }
-
-                  if (!isPlaying) {
-                      isPlaying = true;
-                      noteIndex = 0;
-                      playSequence();
-                      playBtn.textContent = '[ Deactivate BGM ]';
-                  } else {
-                      isPlaying = false;
-                      clearTimeout(sequenceTimeout);
-                      playBtn.textContent = '[ Activate BGM ]';
-                  }
-              });
-          }
-      });
+            playEcho() {
+                const time = this.audioCtx.currentTime;
+                const osc = this.audioCtx.createOscillator();
+                osc.type = 'sine';
+                const noteIndex = Math.floor(this.mousePos.y * this.scale.length);
+                osc.frequency.setValueAtTime(this.scale[noteIndex] * 2, time);
+                const gain = this.audioCtx.createGain();
+                gain.gain.setValueAtTime(0.3, time);
+                gain.gain.exponentialRampToValueAtTime(0.01, time + 0.5);
+                osc.connect(gain);
+                gain.connect(this.audioCtx.destination);
+                osc.start(time);
+                osc.stop(time + 0.5);
+            }
+        };
+        musicEngine.init();
+    });
     </script>
   </body>
 </html>
