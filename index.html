@@ -175,11 +175,13 @@
 
       .hero h1 {
         font-family: 'Press Start 2P', cursive;
-        font-size: clamp(1.8rem, 5vw, 3rem);
+        font-size: clamp(1.25rem, 5vw, 3rem);
         color: var(--text-header);
         text-shadow: 0 0 15px var(--primary-glow), 0 0 25px var(--primary-glow);
         margin-bottom: 1.5rem;
         line-height: 1.4;
+        word-break: break-word;
+        hyphens: auto;
       }
 
       .hero p {
@@ -236,15 +238,17 @@
       section h2 {
           text-align: center;
           font-family: 'Press Start 2P', cursive;
-          font-size: 2rem;
+          font-size: clamp(1.25rem, 4.5vw, 2rem);
           color: var(--text-header);
           text-shadow: 0 0 10px var(--secondary-glow);
           margin-bottom: 3rem;
+          word-break: break-word;
+          hyphens: auto;
       }
 
       .features-grid {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
         gap: 2rem;
       }
 
@@ -255,6 +259,7 @@
         border: 1px solid var(--border-color);
         box-shadow: inset 0 0 15px rgba(0, 255, 157, 0.1), 0 0 5px rgba(0, 255, 157, 0.1);
         transition: all 0.3s ease;
+        max-width: 100%;
       }
 
       .card:hover {
@@ -499,9 +504,22 @@
         }
         .features-grid {
           gap: 1.5rem;
+          grid-template-columns: 1fr;
         }
         .card {
-          padding: 1.75rem 1.5rem;
+          padding: 1.5rem 1.25rem;
+        }
+      }
+
+      @media (max-width: 480px) {
+        .hero h1 {
+          font-size: clamp(1.1rem, 8vw, 2.25rem);
+        }
+        section h2 {
+          font-size: clamp(1.05rem, 7vw, 1.75rem);
+        }
+        .card h3 {
+          font-size: clamp(0.85rem, 5vw, 1rem);
         }
       }
     </style>
