@@ -42,6 +42,7 @@
         background-size: 15px 15px;
         -webkit-font-smoothing: antialiased;
         -moz-osx-font-smoothing: grayscale;
+        overflow-x: hidden; /* Prevent horizontal scroll */
       }
 
       a {
@@ -83,6 +84,7 @@
         display: flex;
         align-items: center;
         gap: 0.75rem;
+        white-space: nowrap; /* Prevent logo text from wrapping */
       }
 
       #bouncing-logo {
@@ -192,7 +194,7 @@
 
       .features-grid {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
         gap: 2rem;
       }
 
@@ -334,6 +336,9 @@
         .navbar {
           flex-direction: column;
           gap: 1.5rem;
+        }
+        .navbar strong {
+          font-size: 0.85rem; /* Reduce font size on mobile */
         }
         .nav-links {
           flex-wrap: wrap;
