@@ -752,6 +752,8 @@ Maps / Gig App ➜ Small overlay reminder just for you
         // --- Theme Switcher ---
         const themeSwitcher = document.getElementById('theme-switcher');
         const body = document.body;
+        let selectedTheme = 'dark';
+        let musicEngine;
 
         const setTheme = (theme) => {
             if (theme === 'light') {
@@ -762,6 +764,10 @@ Maps / Gig App ➜ Small overlay reminder just for you
                 body.classList.remove('light-mode');
                 themeSwitcher.textContent = '☀️';
                 themeSwitcher.title = 'Switch to light mode';
+            }
+            selectedTheme = theme === 'light' ? 'light' : 'dark';
+            if (musicEngine && typeof musicEngine.applyTheme === 'function') {
+                musicEngine.applyTheme(selectedTheme);
             }
         };
 
@@ -803,17 +809,40 @@ Maps / Gig App ➜ Small overlay reminder just for you
             };
 
             const spawnTapBurst = (x, y) => {
-                const particles = 12;
-                for (let i = 0; i < particles; i++) {
+                const isLightMode = selectedTheme === 'light';
+                const palettes = isLightMode
+                    ? [
+                        { fill: '#66bb6a', glow: 'rgba(102, 187, 106, 0.45)' },
+                        { fill: '#9ccc65', glow: 'rgba(156, 204, 101, 0.45)' },
+                        { fill: '#43a047', glow: 'rgba(67, 160, 71, 0.4)' },
+                        { fill: '#2e7d32', glow: 'rgba(46, 125, 50, 0.35)' }
+                    ]
+                    : [
+                        { fill: '#00ff9d', glow: 'rgba(0, 255, 157, 0.6)' },
+                        { fill: '#00e676', glow: 'rgba(0, 230, 118, 0.55)' },
+                        { fill: '#00c853', glow: 'rgba(0, 200, 83, 0.5)' },
+                        { fill: '#64ffda', glow: 'rgba(100, 255, 218, 0.55)' }
+                    ];
+                const particleCount = isLightMode ? 10 + Math.floor(Math.random() * 4) : 12 + Math.floor(Math.random() * 6);
+                const sizeMin = isLightMode ? 6 : 9;
+                const sizeMax = isLightMode ? 18 : 28;
+                const distanceMin = isLightMode ? 22 : 34;
+                const distanceMax = isLightMode ? 46 : 70;
+                for (let i = 0; i < particleCount; i++) {
                     const particle = document.createElement('div');
                     particle.className = 'tap-particle';
-                    const size = 4 + Math.random() * 6;
+                    const size = sizeMin + Math.random() * (sizeMax - sizeMin);
                     particle.style.width = `${size}px`;
                     particle.style.height = `${size}px`;
                     particle.style.left = `${x}px`;
                     particle.style.top = `${y}px`;
+                    const color = palettes[Math.floor(Math.random() * palettes.length)];
+                    particle.style.background = color.fill;
+                    const glowRadius = isLightMode ? 8 + Math.random() * 10 : 12 + Math.random() * 16;
+                    particle.style.boxShadow = `0 0 ${glowRadius}px ${color.glow}`;
+                    particle.style.opacity = isLightMode ? 0.65 + Math.random() * 0.25 : 0.8 + Math.random() * 0.15;
                     const angle = Math.random() * Math.PI * 2;
-                    const distance = 30 + Math.random() * 35;
+                    const distance = distanceMin + Math.random() * (distanceMax - distanceMin);
                     const dx = Math.cos(angle) * distance;
                     const dy = Math.sin(angle) * distance;
                     particle.style.setProperty('--dx', `${dx}px`);
@@ -874,7 +903,7 @@ Maps / Gig App ➜ Small overlay reminder just for you
         initVisuals();
 
         // --- Interactive Music Engine ---
-        const musicEngine = {
+        musicEngine = {
             audioCtx: null,
             isPlaying: false,
             phase: 0,
@@ -885,14 +914,116 @@ Maps / Gig App ➜ Small overlay reminder just for you
             lookahead: 25.0,
             timerID: null,
             mousePos: { x: 0.5, y: 0.5 },
-            scale: [261.63, 293.66, 329.63, 392.00, 440.00, 523.25, 587.33], // C Major scale
-
+            scale: [],
             patterns: {
-                kick: [1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0],
-                hat: [0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0],
-                bass: [1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0],
-                arp1: [1, 0, 1, 0, 1, 0, 1, 1, 1, 0, 1, 0, 1, 0, 1, 0],
-                arp2: [1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 1, 0],
+                kick: new Array(16).fill(0),
+                hat: new Array(16).fill(0),
+                bass: new Array(16).fill(0),
+                arp1: new Array(16).fill(0),
+                arp2: new Array(16).fill(0),
+            },
+            themeSettings: {
+                dark: {
+                    tempo: 92,
+                    scale: [220.00, 246.94, 261.63, 293.66, 329.63, 392.00, 440.00],
+                    patterns: {
+                        kick: [1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0],
+                        hat: [0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0],
+                        bass: [1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0],
+                        arp1: [1, 0, 0, 1, 0, 0, 1, 0, 1, 0, 0, 1, 0, 0, 1, 0],
+                        arp2: [0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0],
+                    },
+                    kickGain: 0.9,
+                    kickStart: 120,
+                    kickDecay: 0.6,
+                    hatGain: 0.12,
+                    hatDecay: 0.2,
+                    bassGain: 0.24,
+                    bassDecay: 0.28,
+                    bassFilter: 280,
+                    arpGain: 0.12,
+                    arpDecay: 0.16,
+                    arpFilterBase: 600,
+                    arpFilterRange: 1400,
+                    delayFeedback: 0.35,
+                    echoGain: 0.2,
+                    echoDecay: 0.6,
+                },
+                light: {
+                    tempo: 132,
+                    scale: [261.63, 329.63, 392.00, 440.00, 523.25, 659.25, 783.99],
+                    patterns: {
+                        kick: [1, 0, 0, 0, 1, 0, 1, 0, 1, 0, 0, 0, 1, 0, 1, 0],
+                        hat: [0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1],
+                        bass: [1, 0, 0, 1, 0, 0, 1, 0, 1, 0, 0, 1, 0, 0, 1, 0],
+                        arp1: [1, 1, 0, 1, 1, 0, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1],
+                        arp2: [0, 1, 1, 0, 1, 1, 0, 1, 0, 1, 1, 0, 1, 1, 0, 1],
+                    },
+                    kickGain: 1.0,
+                    kickStart: 180,
+                    kickDecay: 0.35,
+                    hatGain: 0.28,
+                    hatDecay: 0.12,
+                    bassGain: 0.32,
+                    bassDecay: 0.22,
+                    bassFilter: 520,
+                    arpGain: 0.18,
+                    arpDecay: 0.12,
+                    arpFilterBase: 1100,
+                    arpFilterRange: 2600,
+                    delayFeedback: 0.52,
+                    echoGain: 0.26,
+                    echoDecay: 0.45,
+                }
+            },
+            currentTheme: 'dark',
+            hatGain: 0.2,
+            hatDecay: 0.1,
+            kickGain: 1,
+            kickStart: 150,
+            kickDecay: 0.5,
+            bassGain: 0.3,
+            bassDecay: 0.25,
+            bassFilter: 400,
+            arpGain: 0.15,
+            arpDecay: 0.1,
+            arpFilterBase: 800,
+            arpFilterRange: 2000,
+            delayFeedback: 0.4,
+            echoGain: 0.24,
+            echoDecay: 0.5,
+
+            applyTheme(theme) {
+                const settings = this.themeSettings[theme] || this.themeSettings.dark;
+                this.currentTheme = theme;
+                this.tempo = settings.tempo;
+                this.scale = settings.scale.slice();
+                this.patterns = {
+                    kick: settings.patterns.kick.slice(),
+                    hat: settings.patterns.hat.slice(),
+                    bass: settings.patterns.bass.slice(),
+                    arp1: settings.patterns.arp1.slice(),
+                    arp2: settings.patterns.arp2.slice(),
+                };
+                this.kickGain = settings.kickGain;
+                this.kickStart = settings.kickStart;
+                this.kickDecay = settings.kickDecay;
+                this.hatGain = settings.hatGain;
+                this.hatDecay = settings.hatDecay;
+                this.bassGain = settings.bassGain;
+                this.bassDecay = settings.bassDecay;
+                this.bassFilter = settings.bassFilter;
+                this.arpGain = settings.arpGain;
+                this.arpDecay = settings.arpDecay;
+                this.arpFilterBase = settings.arpFilterBase;
+                this.arpFilterRange = settings.arpFilterRange;
+                this.delayFeedback = settings.delayFeedback;
+                this.echoGain = settings.echoGain;
+                this.echoDecay = settings.echoDecay;
+                if (this.isPlaying && this.audioCtx) {
+                    this.beat = 0;
+                    this.nextNoteTime = this.audioCtx.currentTime;
+                }
             },
 
             init() {
@@ -925,6 +1056,7 @@ Maps / Gig App ➜ Small overlay reminder just for you
                         this.playEcho();
                     }
                 });
+                this.applyTheme(selectedTheme);
             },
 
             toggle() {
@@ -968,14 +1100,14 @@ Maps / Gig App ➜ Small overlay reminder just for you
             playKick(time) {
                 const osc = this.audioCtx.createOscillator();
                 const gain = this.audioCtx.createGain();
-                osc.frequency.setValueAtTime(150, time);
-                osc.frequency.exponentialRampToValueAtTime(0.01, time + 0.5);
-                gain.gain.setValueAtTime(1, time);
-                gain.gain.exponentialRampToValueAtTime(0.01, time + 0.5);
+                osc.frequency.setValueAtTime(this.kickStart, time);
+                osc.frequency.exponentialRampToValueAtTime(0.01, time + this.kickDecay);
+                gain.gain.setValueAtTime(this.kickGain, time);
+                gain.gain.exponentialRampToValueAtTime(0.01, time + this.kickDecay);
                 osc.connect(gain);
                 gain.connect(this.audioCtx.destination);
                 osc.start(time);
-                osc.stop(time + 0.5);
+                osc.stop(time + this.kickDecay);
             },
 
             playHat(time) {
@@ -989,13 +1121,13 @@ Maps / Gig App ➜ Small overlay reminder just for you
                 filter.type = 'highpass';
                 filter.frequency.value = 10000;
                 const gain = this.audioCtx.createGain();
-                gain.gain.setValueAtTime(0.2, time);
-                gain.gain.exponentialRampToValueAtTime(0.01, time + 0.1);
+                gain.gain.setValueAtTime(this.hatGain, time);
+                gain.gain.exponentialRampToValueAtTime(0.01, time + this.hatDecay);
                 noise.connect(filter);
                 filter.connect(gain);
                 gain.connect(this.audioCtx.destination);
                 noise.start(time);
-                noise.stop(time + 0.1);
+                noise.stop(time + this.hatDecay);
             },
 
             playBass(time, beat) {
@@ -1004,16 +1136,16 @@ Maps / Gig App ➜ Small overlay reminder just for you
                 const freq = this.scale[beat % 4] / 2; // Simple bassline from scale
                 osc.frequency.setValueAtTime(freq, time);
                 const gain = this.audioCtx.createGain();
-                gain.gain.setValueAtTime(0.3, time);
-                gain.gain.exponentialRampToValueAtTime(0.01, time + 0.2);
+                gain.gain.setValueAtTime(this.bassGain, time);
+                gain.gain.exponentialRampToValueAtTime(0.01, time + this.bassDecay);
                 const filter = this.audioCtx.createBiquadFilter();
                 filter.type = 'lowpass';
-                filter.frequency.value = 400;
+                filter.frequency.value = this.bassFilter;
                 osc.connect(filter);
                 filter.connect(gain);
                 gain.connect(this.audioCtx.destination);
                 osc.start(time);
-                osc.stop(time + 0.2);
+                osc.stop(time + this.bassDecay);
             },
 
             playArp(time, octave) {
@@ -1024,17 +1156,17 @@ Maps / Gig App ➜ Small overlay reminder just for you
                 osc.frequency.setValueAtTime(freq, time);
 
                 const gain = this.audioCtx.createGain();
-                gain.gain.setValueAtTime(0.15, time);
-                gain.gain.exponentialRampToValueAtTime(0.01, time + 0.1);
+                gain.gain.setValueAtTime(this.arpGain, time);
+                gain.gain.exponentialRampToValueAtTime(0.01, time + this.arpDecay);
 
                 const filter = this.audioCtx.createBiquadFilter();
                 filter.type = 'lowpass';
-                filter.frequency.value = 800 + (this.mousePos.x * 2000); // Mouse X controls filter
+                filter.frequency.value = this.arpFilterBase + (this.mousePos.x * this.arpFilterRange); // Mouse X controls filter
 
                 const delay = this.audioCtx.createDelay();
                 delay.delayTime.value = (60.0 / this.tempo) * 0.75; // Dotted 8th note delay
                 const feedback = this.audioCtx.createGain();
-                feedback.gain.value = 0.4;
+                feedback.gain.value = this.delayFeedback;
 
                 osc.connect(filter);
                 filter.connect(gain);
@@ -1060,12 +1192,12 @@ Maps / Gig App ➜ Small overlay reminder just for you
                 const noteIndex = Math.floor(this.mousePos.y * this.scale.length);
                 osc.frequency.setValueAtTime(this.scale[noteIndex] * 2, time);
                 const gain = this.audioCtx.createGain();
-                gain.gain.setValueAtTime(0.3, time);
-                gain.gain.exponentialRampToValueAtTime(0.01, time + 0.5);
+                gain.gain.setValueAtTime(this.echoGain, time);
+                gain.gain.exponentialRampToValueAtTime(0.01, time + this.echoDecay);
                 osc.connect(gain);
                 gain.connect(this.audioCtx.destination);
                 osc.start(time);
-                osc.stop(time + 0.5);
+                osc.stop(time + this.echoDecay);
             }
         };
         musicEngine.init();
