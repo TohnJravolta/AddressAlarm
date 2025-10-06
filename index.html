@@ -12,16 +12,29 @@
       @import url('https://fonts.googleapis.com/css2?family=Lexend:wght@400;600;700&family=Press+Start+2P&display=swap');
 
       :root {
-        --primary-glow: #00ff9d; /* A retro neon green */
-        --secondary-glow: #ff00c1; /* A retro neon pink */
-        --background: #121212; /* A deep, dark background */
-        --surface: #1e1e1e; /* A slightly lighter surface for cards */
-        --text: #e0e0e0; /* A light grey for body text */
+        /* Dark Theme (Default) */
+        --primary-glow: #00ff9d;
+        --secondary-glow: #ff00c1;
+        --background: #121212;
+        --surface: #1e1e1e;
+        --text: #e0e0e0;
         --text-header: #ffffff;
         --muted: #888888;
+        --border-color: rgba(0, 255, 157, 0.3);
         --max-width: 960px;
         --border-radius: 8px;
-        --border-color: rgba(0, 255, 157, 0.3);
+      }
+
+      body.light-mode {
+        /* Light Theme */
+        --primary-glow: #006442;
+        --secondary-glow: #a0006d;
+        --background: #f5f5f5;
+        --surface: #ffffff;
+        --text: #212121;
+        --text-header: #000000;
+        --muted: #757575;
+        --border-color: #e0e0e0;
       }
 
       * {
@@ -98,9 +111,42 @@
         60% { transform: translateY(-5px); }
       }
 
+      .nav-controls {
+        display: flex;
+        align-items: center;
+        gap: 1.5rem;
+      }
+
       .nav-links {
         display: flex;
         gap: 1.5rem;
+      }
+
+      #theme-switcher {
+        background: none;
+        border: 1px solid var(--muted);
+        color: var(--text);
+        font-size: 1.2rem;
+        cursor: pointer;
+        padding: 0.25rem 0.5rem;
+        border-radius: var(--border-radius);
+        transition: all 0.2s ease;
+        line-height: 1; /* Aligns emoji better */
+      }
+
+      #theme-switcher:hover {
+        color: var(--primary-glow);
+        border-color: var(--primary-glow);
+      }
+
+      body.light-mode #theme-switcher {
+        border-color: var(--border-color);
+        color: var(--text);
+      }
+
+      body.light-mode #theme-switcher:hover {
+        color: var(--primary-glow);
+        border-color: var(--primary-glow);
       }
 
       .nav-links a {
@@ -332,6 +378,44 @@
         opacity: 1;
       }
 
+      /* --- Light Theme Overrides --- */
+      body.light-mode .navbar strong,
+      body.light-mode .nav-links a:hover,
+      body.light-mode .hero h1,
+      body.light-mode section h2,
+      body.light-mode .button:hover {
+        text-shadow: none;
+      }
+
+      body.light-mode .button {
+        background: var(--primary-glow);
+        color: #fff;
+        border-color: var(--primary-glow);
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      }
+      body.light-mode .button:hover {
+        background: #004d33; /* Darker shade for hover */
+        border-color: #004d33;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+      }
+
+      body.light-mode .card {
+        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+      }
+      body.light-mode .card:hover {
+        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+      }
+
+      body.light-mode .trail {
+        background: var(--primary-glow);
+        box-shadow: none;
+      }
+
+      body.light-mode #music-player button:hover,
+      body.light-mode #music-player button:focus {
+        box-shadow: none;
+      }
+
       @media (max-width: 768px) {
         .navbar {
           flex-direction: column;
@@ -339,6 +423,10 @@
         }
         .navbar strong {
           font-size: 0.85rem; /* Reduce font size on mobile */
+        }
+        .nav-controls {
+          flex-direction: column;
+          gap: 1.5rem;
         }
         .nav-links {
           flex-wrap: wrap;
@@ -352,13 +440,16 @@
     <header>
       <nav class="navbar">
         <strong><span id="bouncing-logo" role="img" aria-label="Alarm emojis">🚨 AddressAlarm 🚨</span></strong>
-        <div class="nav-links">
-          <a href="#who-is-it-for">Who It's For</a>
-          <a href="#features">Features</a>
-          <a href="#how-it-works">How It Works</a>
-          <a href="#download">Download</a>
-          <a href="#roadmap">Roadmap</a>
-          <a href="https://github.com/TohnJravolta/AAT" target="_blank" rel="noopener">GitHub</a>
+        <div class="nav-controls">
+          <div class="nav-links">
+            <a href="#who-is-it-for">Who It's For</a>
+            <a href="#features">Features</a>
+            <a href="#how-it-works">How It Works</a>
+            <a href="#download">Download</a>
+            <a href="#roadmap">Roadmap</a>
+            <a href="https://github.com/TohnJravolta/AAT" target="_blank" rel="noopener">GitHub</a>
+          </div>
+          <button id="theme-switcher" title="Toggle theme">☀️</button>
         </div>
       </nav>
     </header>
@@ -535,6 +626,37 @@
     </footer>
     <script>
     document.addEventListener('DOMContentLoaded', (event) => {
+        // --- Theme Switcher ---
+        const themeSwitcher = document.getElementById('theme-switcher');
+        const body = document.body;
+
+        const setTheme = (theme) => {
+            if (theme === 'light') {
+                body.classList.add('light-mode');
+                themeSwitcher.textContent = '🌙';
+                themeSwitcher.title = 'Switch to dark mode';
+            } else {
+                body.classList.remove('light-mode');
+                themeSwitcher.textContent = '☀️';
+                themeSwitcher.title = 'Switch to light mode';
+            }
+        };
+
+        themeSwitcher.addEventListener('click', () => {
+            const isLight = body.classList.contains('light-mode');
+            if (isLight) {
+                localStorage.setItem('theme', 'dark');
+                setTheme('dark');
+            } else {
+                localStorage.setItem('theme', 'light');
+                setTheme('light');
+            }
+        });
+
+        // Load saved theme from localStorage
+        const savedTheme = localStorage.getItem('theme') || 'dark';
+        setTheme(savedTheme);
+
         // --- Visual Effects ---
         const initVisuals = () => {
             const bouncingLogo = document.getElementById('bouncing-logo');
