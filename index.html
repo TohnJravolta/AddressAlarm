@@ -323,6 +323,19 @@
           margin: 0.5rem 0;
       }
 
+      .ascii-diagram {
+        font-family: 'Courier New', Courier, monospace;
+        background: var(--surface);
+        border: 1px solid var(--border-color);
+        border-radius: var(--border-radius);
+        padding: 1rem;
+        white-space: pre-wrap;
+        word-break: keep-all;
+        font-size: 0.9rem;
+        line-height: 1.5;
+        margin: 1.5rem 0;
+      }
+
       .trail {
           position: absolute;
           height: 8px;
@@ -532,8 +545,16 @@
           <p>Originally built for gig workers, AddressAlarm is now a vital tool for anyone who navigates unfamiliar locations.</p>
           <div class="features-grid">
             <div class="card">
-              <h3>📦 Gig &amp; Delivery Drivers</h3>
-              <p>Keep a private log of difficult drop-offs, unsafe areas, or buildings with access codes.</p>
+              <h3>📮 Couriers &amp; Rural Carriers</h3>
+              <p>Privately note hard-to-find mailboxes, unsafe routes, or households that need extra caution before you pull up.</p>
+            </div>
+            <div class="card">
+              <h3>🚕 Taxi &amp; Rideshare Drivers</h3>
+              <p>Get a subtle warning before accepting pickups or drop-offs tied to dangerous requests, no-show zones, or past harassment.</p>
+            </div>
+            <div class="card">
+              <h3>🛠️ Gig Taskers &amp; On-Demand Pros</h3>
+              <p>Flag customers who weaponize tips, misrepresent jobs, or create unsafe conditions so you can plan safer alternatives.</p>
             </div>
             <div class="card">
               <h3>👮 Law Enforcement &amp; Social Workers</h3>
@@ -548,6 +569,51 @@
               <p>A simple, private way to remember addresses you'd rather avoid for any reason.</p>
             </div>
           </div>
+        </div>
+      </section>
+
+      <section id="worker-disclosure" class="alternate-bg">
+        <div class="section-inner">
+          <h2>Worker safety comes first, even when platforms disagree</h2>
+          <p>
+            I built AddressAlarm after too many late-night routes where GPS led me to unlit driveways, customers hurled threats, or tip-baiters dangled pay only to yank it back. Those sketchy encounters showed how easily bad-faith customers exploit "customer service" policies while contractors are told to smile and take it. This tool exists because safety shouldn't be optional or traded for ratings.
+          </p>
+          <p>
+            Gig apps often prioritize volume over people. Many won't let contractors block abusive clients or decline anonymous offers, creating a major safety gap that AddressAlarm helps close by giving you the context those systems withhold.
+          </p>
+          <div class="features-grid">
+            <div class="card">
+              <h3>⚖️ Know the terms (and limits)</h3>
+              <p><strong>Some gig platforms may claim tools like this violate their Terms of Service.</strong> Use AddressAlarm at your own discretion and risk. We can't accept responsibility if a company penalizes you, but we can be clear that protecting yourself is never wrongdoing.</p>
+            </div>
+            <div class="card">
+              <h3>✊ Push back together</h3>
+              <p>Talk with other workers, document retaliation, and contact platform support, regulators, and press when policies put "customer service" ahead of your safety. Collective action is how we pressure companies to respect contractor rights.</p>
+            </div>
+            <div class="card">
+              <h3>🛡️ Built to protect, not to cheat</h3>
+              <p>This tool is exclusively for preventing harmful encounters. It doesn't auto-accept, auto-decline, or manipulate pricing. It simply restores information so you can say no to unsafe work.</p>
+            </div>
+          </div>
+          <h3>How AddressAlarm fits into your phone (ELI5)</h3>
+          <p>
+            AddressAlarm sits quietly alongside the apps you choose. It reads the address on screen, compares it to your private watchlist, and gently alerts you if there's a match—nothing more.
+          </p>
+          <pre class="ascii-diagram" aria-label="Diagram showing AddressAlarm working locally">
+Your Watchlist (stored on-device)
+           │
+           ▼
+    AddressAlarm Service
+           │ checks addresses you view
+           ▼
+Maps / Gig App ➜ Small overlay reminder just for you
+          </pre>
+          <p>
+            Only platforms that already monitor background processes—something their murky TOS currently allow so they can police whether you're protecting your own interests—could notice AddressAlarm running as an accessibility service. That surveillance power should be tightly audited and regulated strictly toward preventing contractors or customers from cheating or abusing the system, not to punish workers for staying safe.
+          </p>
+          <p>
+            We urge you to keep advocating for policies that let contractors block dangerous customers, demand transparency about monitoring, and insist that safety comes before metrics. AddressAlarm is one small, calm way to watch out for yourself without fear mongering—because your life is worth more than any single fare or delivery.
+          </p>
         </div>
       </section>
 
