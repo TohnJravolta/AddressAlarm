@@ -43,6 +43,9 @@
 
       html {
         scroll-behavior: smooth;
+        width: 100%;
+        max-width: 100%;
+        overflow-x: hidden;
       }
 
       body {
@@ -56,6 +59,7 @@
         -webkit-font-smoothing: antialiased;
         -moz-osx-font-smoothing: grayscale;
         overflow-x: hidden; /* Prevent horizontal scroll */
+        max-width: 100%;
       }
 
       a {
@@ -298,6 +302,9 @@
           border: 1px solid var(--border-color);
           font-weight: 600;
           color: var(--primary-glow);
+          flex: 1 1 220px;
+          max-width: min(100%, 320px);
+          word-break: break-word;
       }
 
       .footer {
@@ -324,6 +331,30 @@
           background: var(--primary-glow);
           pointer-events: none;
           box-shadow: 0 0 10px var(--primary-glow);
+      }
+
+      .tap-particle {
+          position: absolute;
+          height: 10px;
+          width: 10px;
+          border-radius: 50%;
+          background: rgba(0, 255, 157, 0.9);
+          pointer-events: none;
+          opacity: 0.85;
+          transform: translate(-50%, -50%);
+          animation: tapBurst 600ms ease-out forwards;
+          box-shadow: 0 0 12px rgba(0, 255, 157, 0.55);
+      }
+
+      @keyframes tapBurst {
+          0% {
+              transform: translate(-50%, -50%) scale(1);
+              opacity: 1;
+          }
+          100% {
+              transform: translate(calc(-50% + var(--dx, 0px)), calc(-50% + var(--dy, 0px))) scale(0);
+              opacity: 0;
+          }
       }
 
       #music-player button {
@@ -357,6 +388,7 @@
       .tooltip .tooltip-text {
         visibility: hidden;
         width: 220px;
+        max-width: min(220px, calc(100vw - 2.5rem));
         background-color: var(--surface);
         color: var(--text);
         text-align: center;
@@ -366,12 +398,13 @@
         z-index: 10;
         bottom: 140%;
         left: 50%;
-        margin-left: -110px;
+        transform: translateX(-50%);
         opacity: 0;
         transition: opacity 0.3s;
         border: 1px solid var(--border-color);
         box-shadow: 0 5px 15px rgba(0,0,0,0.3);
         pointer-events: none;
+        word-break: break-word;
       }
       .tooltip:hover .tooltip-text {
         visibility: visible;
@@ -411,6 +444,10 @@
         box-shadow: none;
       }
 
+      body.light-mode .tap-particle {
+        box-shadow: 0 0 10px rgba(0, 128, 64, 0.35);
+      }
+
       body.light-mode #music-player button:hover,
       body.light-mode #music-player button:focus {
         box-shadow: none;
@@ -432,6 +469,25 @@
           flex-wrap: wrap;
           justify-content: center;
           gap: 1rem 1.5rem;
+        }
+      }
+
+      @media (max-width: 600px) {
+        .hero {
+          padding: 5rem 1.25rem 4rem;
+        }
+        section {
+          padding: 3.5rem 1.25rem;
+        }
+        .hero p,
+        section p {
+          font-size: 1rem;
+        }
+        .features-grid {
+          gap: 1.5rem;
+        }
+        .card {
+          padding: 1.75rem 1.5rem;
         }
       }
     </style>
@@ -640,6 +696,9 @@
                 themeSwitcher.textContent = '☀️';
                 themeSwitcher.title = 'Switch to light mode';
             }
+            if (window.musicEngine && typeof window.musicEngine.applyMood === 'function') {
+                window.musicEngine.applyMood(theme);
+            }
         };
 
         themeSwitcher.addEventListener('click', () => {
@@ -671,13 +730,96 @@
                 document.body.appendChild(trail);
                 trails.push({ el: trail, x: -20, y: -20 });
             }
-            let mouseX = -20, mouseY = -20;
-            document.addEventListener('mousemove', e => {
-                mouseX = e.pageX;
-                mouseY = e.pageY;
-            });
+
+            let pointerX = -20, pointerY = -20;
+
+            const hexToRgba = (hex, alpha = 1) => {
+                let value = hex.replace('#', '');
+                if (value.length === 3) {
+                    value = value.split('').map(ch => ch + ch).join('');
+                }
+                const num = parseInt(value, 16);
+                const r = (num >> 16) & 255;
+                const g = (num >> 8) & 255;
+                const b = num & 255;
+                return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+            };
+
+            const randomFrom = (arr) => arr[Math.floor(Math.random() * arr.length)];
+
+            const updatePointer = (x, y) => {
+                pointerX = x;
+                pointerY = y;
+            };
+
+            const spawnTapBurst = (x, y) => {
+                const isLightMode = body.classList.contains('light-mode');
+                const particles = isLightMode ? 14 : 12;
+                const darkPalette = ['#00ff9d', '#3dffb0', '#00e676', '#4fffba', '#00c853'];
+                const lightPalette = ['#2ecc71', '#7bed9f', '#a8ff9e', '#1abc9c', '#c8ffb5'];
+                const palette = isLightMode ? lightPalette : darkPalette;
+                const minSize = isLightMode ? 4 : 6;
+                const maxSize = isLightMode ? 11 : 16;
+                const minGlow = isLightMode ? 6 : 10;
+                const maxGlow = isLightMode ? 12 : 18;
+                for (let i = 0; i < particles; i++) {
+                    const particle = document.createElement('div');
+                    particle.className = 'tap-particle';
+                    const size = minSize + Math.random() * (maxSize - minSize);
+                    const glow = minGlow + Math.random() * (maxGlow - minGlow);
+                    const color = randomFrom(palette);
+                    particle.style.width = `${size}px`;
+                    particle.style.height = `${size}px`;
+                    particle.style.left = `${x}px`;
+                    particle.style.top = `${y}px`;
+                    particle.style.background = color;
+                    particle.style.boxShadow = `0 0 ${glow}px ${hexToRgba(color, isLightMode ? 0.45 : 0.6)}`;
+                    const angle = Math.random() * Math.PI * 2;
+                    const distance = 30 + Math.random() * 35;
+                    const dx = Math.cos(angle) * distance;
+                    const dy = Math.sin(angle) * distance;
+                    particle.style.setProperty('--dx', `${dx}px`);
+                    particle.style.setProperty('--dy', `${dy}px`);
+                    document.body.appendChild(particle);
+                    particle.addEventListener('animationend', () => particle.remove());
+                }
+            };
+
+            const handleTouch = (event, shouldBurst = false) => {
+                if (event.touches && event.touches.length) {
+                    const touch = event.touches[0];
+                    updatePointer(touch.pageX, touch.pageY);
+                    if (shouldBurst) {
+                        spawnTapBurst(touch.pageX, touch.pageY);
+                    }
+                }
+            };
+
+            if (window.PointerEvent) {
+                document.addEventListener('pointermove', e => {
+                    if (e.isPrimary) {
+                        updatePointer(e.pageX, e.pageY);
+                    }
+                }, { passive: true });
+                document.addEventListener('pointerdown', e => {
+                    if (!e.isPrimary) return;
+                    updatePointer(e.pageX, e.pageY);
+                    spawnTapBurst(e.pageX, e.pageY);
+                });
+            } else {
+                document.addEventListener('mousemove', e => {
+                    updatePointer(e.pageX, e.pageY);
+                });
+                document.addEventListener('mousedown', e => {
+                    updatePointer(e.pageX, e.pageY);
+                    spawnTapBurst(e.pageX, e.pageY);
+                });
+                document.addEventListener('touchstart', e => handleTouch(e, true), { passive: true });
+                document.addEventListener('touchmove', handleTouch, { passive: true });
+            }
+
             const animateTrail = () => {
-                let prevX = mouseX, prevY = mouseY;
+                let prevX = pointerX, prevY = pointerY;
                 trails.forEach(p => {
                     const currentX = p.x, currentY = p.y;
                     p.x += (prevX - currentX) / trailLag;
@@ -705,28 +847,93 @@
             lookahead: 25.0,
             timerID: null,
             mousePos: { x: 0.5, y: 0.5 },
-            scale: [261.63, 293.66, 329.63, 392.00, 440.00, 523.25, 587.33], // C Major scale
-
+            scale: [261.63, 293.66, 329.63, 392.0, 440.0, 523.25, 587.33],
             patterns: {
-                kick: [1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0],
-                hat: [0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0],
-                bass: [1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0],
-                arp1: [1, 0, 1, 0, 1, 0, 1, 1, 1, 0, 1, 0, 1, 0, 1, 0],
-                arp2: [1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 1, 0],
+                kick: new Array(16).fill(0),
+                hat: new Array(16).fill(0),
+                bass: new Array(16).fill(0),
+                arp1: new Array(16).fill(0),
+                arp2: new Array(16).fill(0),
+            },
+            config: {
+                kick: { startFreq: 150, endFreq: 0.01, decay: 0.5, gain: 1, endGain: 0.01 },
+                hat: { cutoff: 10000, gain: 0.2, decay: 0.1 },
+                bass: { wave: 'sawtooth', octave: 2, gain: 0.3, decay: 0.2, cutoff: 400 },
+                arp: { wave: 'square', gain: 0.15, decay: 0.1, filterBase: 800, filterRange: 2000, delay: 0.75, feedback: 0.4, noteSkew: 1 },
+                echo: { multiplier: 2, gain: 0.3, decay: 0.5 },
+            },
+
+            moods: {
+                dark: {
+                    tempo: 92,
+                    scale: [220.0, 246.94, 261.63, 293.66, 329.63, 349.23, 392.0],
+                    patterns: {
+                        kick: [1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0],
+                        hat: [0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0],
+                        bass: [1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0],
+                        arp1: [0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0],
+                        arp2: [0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0],
+                    },
+                    config: {
+                        kick: { startFreq: 120, endFreq: 35, decay: 0.6, gain: 0.9, endGain: 0.01 },
+                        hat: { cutoff: 7500, gain: 0.12, decay: 0.18 },
+                        bass: { wave: 'sine', octave: 2, gain: 0.22, decay: 0.28, cutoff: 320 },
+                        arp: { wave: 'triangle', gain: 0.12, decay: 0.14, filterBase: 600, filterRange: 1500, delay: 0.9, feedback: 0.32, noteSkew: 1.2 },
+                        echo: { multiplier: 1.5, gain: 0.22, decay: 0.6 },
+                    },
+                },
+                light: {
+                    tempo: 128,
+                    scale: [261.63, 293.66, 329.63, 349.23, 392.0, 440.0, 523.25],
+                    patterns: {
+                        kick: [1, 0, 0, 0, 1, 0, 1, 0, 1, 0, 0, 0, 1, 0, 1, 0],
+                        hat: [0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1],
+                        bass: [1, 0, 0, 1, 0, 0, 1, 0, 1, 0, 0, 1, 0, 1, 0, 0],
+                        arp1: [1, 0, 1, 1, 1, 0, 1, 0, 1, 0, 1, 1, 1, 0, 1, 0],
+                        arp2: [1, 1, 0, 1, 1, 0, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1],
+                    },
+                    config: {
+                        kick: { startFreq: 160, endFreq: 45, decay: 0.45, gain: 1, endGain: 0.01 },
+                        hat: { cutoff: 11000, gain: 0.22, decay: 0.12 },
+                        bass: { wave: 'sawtooth', octave: 1.5, gain: 0.32, decay: 0.2, cutoff: 480 },
+                        arp: { wave: 'square', gain: 0.18, decay: 0.1, filterBase: 900, filterRange: 2600, delay: 0.65, feedback: 0.42, noteSkew: 0.9 },
+                        echo: { multiplier: 2.25, gain: 0.32, decay: 0.45 },
+                    },
+                },
             },
 
             init() {
                 document.getElementById('play-music-btn').addEventListener('click', () => this.toggle());
-                document.addEventListener('mousemove', e => {
-                    this.mousePos.x = e.clientX / window.innerWidth;
-                    this.mousePos.y = e.clientY / window.innerHeight;
-                });
+
+                const updateMousePos = (clientX, clientY) => {
+                    this.mousePos.x = Math.min(Math.max(clientX / window.innerWidth, 0), 1);
+                    this.mousePos.y = Math.min(Math.max(clientY / window.innerHeight, 0), 1);
+                };
+
+                if (window.PointerEvent) {
+                    document.addEventListener('pointermove', e => {
+                        if (e.isPrimary) {
+                            updateMousePos(e.clientX, e.clientY);
+                        }
+                    }, { passive: true });
+                } else {
+                    document.addEventListener('mousemove', e => {
+                        updateMousePos(e.clientX, e.clientY);
+                    });
+                    document.addEventListener('touchmove', e => {
+                        if (e.touches && e.touches.length) {
+                            updateMousePos(e.touches[0].clientX, e.touches[0].clientY);
+                        }
+                    }, { passive: true });
+                }
                 document.body.addEventListener('click', e => {
                     if (this.isPlaying && e.target.id !== 'play-music-btn') {
                         this.phase = (this.phase + 1) % 6;
                         this.playEcho();
                     }
                 });
+
+                this.applyMood(body.classList.contains('light-mode') ? 'light' : 'dark');
             },
 
             toggle() {
@@ -770,14 +977,15 @@
             playKick(time) {
                 const osc = this.audioCtx.createOscillator();
                 const gain = this.audioCtx.createGain();
-                osc.frequency.setValueAtTime(150, time);
-                osc.frequency.exponentialRampToValueAtTime(0.01, time + 0.5);
-                gain.gain.setValueAtTime(1, time);
-                gain.gain.exponentialRampToValueAtTime(0.01, time + 0.5);
+                const kickConfig = this.config.kick;
+                osc.frequency.setValueAtTime(kickConfig.startFreq, time);
+                osc.frequency.exponentialRampToValueAtTime(kickConfig.endFreq, time + kickConfig.decay);
+                gain.gain.setValueAtTime(kickConfig.gain, time);
+                gain.gain.exponentialRampToValueAtTime(kickConfig.endGain, time + kickConfig.decay);
                 osc.connect(gain);
                 gain.connect(this.audioCtx.destination);
                 osc.start(time);
-                osc.stop(time + 0.5);
+                osc.stop(time + kickConfig.decay);
             },
 
             playHat(time) {
@@ -789,54 +997,58 @@
                 noise.buffer = buffer;
                 const filter = this.audioCtx.createBiquadFilter();
                 filter.type = 'highpass';
-                filter.frequency.value = 10000;
+                const hatConfig = this.config.hat;
+                filter.frequency.value = hatConfig.cutoff;
                 const gain = this.audioCtx.createGain();
-                gain.gain.setValueAtTime(0.2, time);
-                gain.gain.exponentialRampToValueAtTime(0.01, time + 0.1);
+                gain.gain.setValueAtTime(hatConfig.gain, time);
+                gain.gain.exponentialRampToValueAtTime(0.01, time + hatConfig.decay);
                 noise.connect(filter);
                 filter.connect(gain);
                 gain.connect(this.audioCtx.destination);
                 noise.start(time);
-                noise.stop(time + 0.1);
+                noise.stop(time + hatConfig.decay);
             },
 
             playBass(time, beat) {
                 const osc = this.audioCtx.createOscillator();
-                osc.type = 'sawtooth';
-                const freq = this.scale[beat % 4] / 2; // Simple bassline from scale
+                const bassConfig = this.config.bass;
+                osc.type = bassConfig.wave;
+                const freq = this.scale[beat % 4] / bassConfig.octave;
                 osc.frequency.setValueAtTime(freq, time);
                 const gain = this.audioCtx.createGain();
-                gain.gain.setValueAtTime(0.3, time);
-                gain.gain.exponentialRampToValueAtTime(0.01, time + 0.2);
+                gain.gain.setValueAtTime(bassConfig.gain, time);
+                gain.gain.exponentialRampToValueAtTime(0.01, time + bassConfig.decay);
                 const filter = this.audioCtx.createBiquadFilter();
                 filter.type = 'lowpass';
-                filter.frequency.value = 400;
+                filter.frequency.value = bassConfig.cutoff;
                 osc.connect(filter);
                 filter.connect(gain);
                 gain.connect(this.audioCtx.destination);
                 osc.start(time);
-                osc.stop(time + 0.2);
+                osc.stop(time + bassConfig.decay);
             },
 
             playArp(time, octave) {
                 const osc = this.audioCtx.createOscillator();
-                osc.type = 'square';
-                const noteIndex = Math.floor(this.mousePos.y * this.scale.length);
+                const arpConfig = this.config.arp;
+                osc.type = arpConfig.wave;
+                const skewedPosition = Math.pow(this.mousePos.y, arpConfig.noteSkew);
+                const noteIndex = Math.min(this.scale.length - 1, Math.floor(skewedPosition * this.scale.length));
                 const freq = this.scale[noteIndex] * octave;
                 osc.frequency.setValueAtTime(freq, time);
 
                 const gain = this.audioCtx.createGain();
-                gain.gain.setValueAtTime(0.15, time);
-                gain.gain.exponentialRampToValueAtTime(0.01, time + 0.1);
+                gain.gain.setValueAtTime(arpConfig.gain, time);
+                gain.gain.exponentialRampToValueAtTime(0.01, time + arpConfig.decay);
 
                 const filter = this.audioCtx.createBiquadFilter();
                 filter.type = 'lowpass';
-                filter.frequency.value = 800 + (this.mousePos.x * 2000); // Mouse X controls filter
+                filter.frequency.value = arpConfig.filterBase + (this.mousePos.x * arpConfig.filterRange);
 
                 const delay = this.audioCtx.createDelay();
-                delay.delayTime.value = (60.0 / this.tempo) * 0.75; // Dotted 8th note delay
+                delay.delayTime.value = (60.0 / this.tempo) * arpConfig.delay;
                 const feedback = this.audioCtx.createGain();
-                feedback.gain.value = 0.4;
+                feedback.gain.value = arpConfig.feedback;
 
                 osc.connect(filter);
                 filter.connect(gain);
@@ -847,7 +1059,7 @@
                 feedback.connect(this.audioCtx.destination);
 
                 osc.start(time);
-                osc.stop(time + 0.1);
+                osc.stop(time + arpConfig.decay);
             },
 
             updateFilter(time) {
@@ -860,16 +1072,38 @@
                 const osc = this.audioCtx.createOscillator();
                 osc.type = 'sine';
                 const noteIndex = Math.floor(this.mousePos.y * this.scale.length);
-                osc.frequency.setValueAtTime(this.scale[noteIndex] * 2, time);
+                const echoConfig = this.config.echo;
+                osc.frequency.setValueAtTime(this.scale[noteIndex] * echoConfig.multiplier, time);
                 const gain = this.audioCtx.createGain();
-                gain.gain.setValueAtTime(0.3, time);
-                gain.gain.exponentialRampToValueAtTime(0.01, time + 0.5);
+                gain.gain.setValueAtTime(echoConfig.gain, time);
+                gain.gain.exponentialRampToValueAtTime(0.01, time + echoConfig.decay);
                 osc.connect(gain);
                 gain.connect(this.audioCtx.destination);
                 osc.start(time);
-                osc.stop(time + 0.5);
+                osc.stop(time + echoConfig.decay);
+            },
+
+            applyMood(theme) {
+                const moodKey = theme === 'light' ? 'light' : 'dark';
+                const mood = this.moods[moodKey];
+                if (!mood) return;
+                this.tempo = mood.tempo;
+                this.scale = mood.scale.slice();
+                this.patterns = {
+                    kick: mood.patterns.kick.slice(),
+                    hat: mood.patterns.hat.slice(),
+                    bass: mood.patterns.bass.slice(),
+                    arp1: mood.patterns.arp1.slice(),
+                    arp2: mood.patterns.arp2.slice(),
+                };
+                this.config = JSON.parse(JSON.stringify(mood.config));
+                if (this.isPlaying && this.audioCtx) {
+                    this.nextNoteTime = this.audioCtx.currentTime + 0.05;
+                    this.beat = 0;
+                }
             }
         };
+        window.musicEngine = musicEngine;
         musicEngine.init();
     });
     </script>
