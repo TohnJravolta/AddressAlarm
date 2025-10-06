@@ -175,14 +175,14 @@
 
       .hero h1 {
         font-family: 'Press Start 2P', cursive;
-        font-size: clamp(1.15rem, 4.75vw, 3rem);
+        font-size: clamp(1.1rem, 3.75vw + 0.25rem, 3rem);
         color: var(--text-header);
         text-shadow: 0 0 15px var(--primary-glow), 0 0 25px var(--primary-glow);
         margin-bottom: 1.5rem;
         line-height: 1.4;
-        word-break: normal;
-        overflow-wrap: anywhere;
-        hyphens: manual;
+        word-break: keep-all;
+        overflow-wrap: normal;
+        hyphens: none;
       }
 
       .hero p {
@@ -239,13 +239,13 @@
         section h2 {
           text-align: center;
           font-family: 'Press Start 2P', cursive;
-          font-size: clamp(1.15rem, 4.25vw, 2rem);
+          font-size: clamp(1.05rem, 3.5vw + 0.2rem, 2rem);
           color: var(--text-header);
           text-shadow: 0 0 10px var(--secondary-glow);
           margin-bottom: 3rem;
-          word-break: normal;
-          overflow-wrap: anywhere;
-          hyphens: manual;
+          word-break: keep-all;
+          overflow-wrap: normal;
+          hyphens: none;
         }
 
       .features-grid {
@@ -311,7 +311,19 @@
           color: var(--primary-glow);
           flex: 1 1 220px;
           max-width: min(100%, 320px);
-          word-break: break-word;
+          word-break: keep-all;
+          overflow-wrap: normal;
+          hyphens: none;
+      }
+
+      @media (max-width: 520px) {
+        .hero h1 {
+          font-size: clamp(1rem, 6vw + 0.25rem, 2.4rem);
+        }
+
+        section h2 {
+          font-size: clamp(1rem, 5.5vw + 0.1rem, 1.75rem);
+        }
       }
 
       .footer {
