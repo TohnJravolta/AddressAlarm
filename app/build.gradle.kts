@@ -63,6 +63,9 @@ dependencies {
   implementation("androidx.room:room-runtime:$roomVersion") // Added
   implementation("androidx.room:room-ktx:$roomVersion") // Ensured version
   kapt("androidx.room:room-compiler:$roomVersion") // Ensured version
+  implementation("androidx.sqlite:sqlite-ktx:2.4.0")
+  implementation("net.zetetic:android-database-sqlcipher:4.5.5")
+  implementation("androidx.security:security-crypto:1.1.0-alpha06")
 
   val composeBom = platform("androidx.compose:compose-bom:2024.06.00")
   implementation(composeBom)
@@ -81,6 +84,9 @@ dependencies {
 
   implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.3")
   implementation("com.google.android.material:material:1.12.0")
+
+  androidTestImplementation("androidx.test:core:1.5.0")
+  androidTestImplementation("androidx.test.ext:junit:1.1.5")
 }
 
 kapt {
