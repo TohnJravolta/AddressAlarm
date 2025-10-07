@@ -43,17 +43,17 @@ class PlaintextDatabaseMigrator(context: Context) {
 
     /**
      * Inserts legacy data into the encrypted database and cleans up the staged plaintext file.
+     * This must be called from within a transaction on the target database, such as from
+     * RoomDatabase.Callback#onCreate.
      */
-    fun importLegacyData(database: AppDatabase, dump: LegacyDump) {
+    fun importLegacyData(writableDb: androidx.sqlite.db.SupportSQLiteDatabase, dump: LegacyDump) {
         if (dump.places.isEmpty()) {
             cleanupBackup(dump)
             return
         }
 
-        val writable = database.openHelper.writableDatabase
-        writable.beginTransaction()
         try {
-            val statement = writable.compileStatement(INSERT_OR_REPLACE_SQL)
+            val statement = writableDb.compileStatement(INSERT_OR_REPLACE_SQL)
             dump.places.forEach { place ->
                 statement.bindLong(1, place.id)
                 if (place.name != null) {
@@ -71,12 +71,10 @@ class PlaintextDatabaseMigrator(context: Context) {
                 statement.executeInsert()
                 statement.clearBindings()
             }
-            writable.setTransactionSuccessful()
         } finally {
-            writable.endTransaction()
+            // The transaction is managed by Room, but we must clean up the backup file.
+            cleanupBackup(dump)
         }
-
-        cleanupBackup(dump)
     }
 
     fun markEncrypted() {

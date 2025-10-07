@@ -29,27 +29,48 @@ object ServiceLocator {
     private fun buildDatabase(context: Context): AppDatabase {
         val provider = keyProvider ?: EncryptionKeyProvider.getInstance(context).also { keyProvider = it }
         val migrator = PlaintextDatabaseMigrator(context)
+
+        // Check for legacy data *before* building the database.
+        // This is a small, synchronous I/O hit to check for a file and a shared preference.
+        // It's a reasonable trade-off to correctly configure the one-time migration callback.
         val legacyDump = migrator.extractLegacyDataIfNeeded()
 
         SQLiteDatabase.loadLibs(context)
         val passphrase = provider.getOrCreateDatabaseKey()
         val factory = SupportFactory(passphrase.copyOf())
 
-        val database = Room.databaseBuilder(
+        val db = Room.databaseBuilder(
             context,
             AppDatabase::class.java,
             DATABASE_NAME
         )
             .openHelperFactory(factory)
             .setJournalMode(RoomDatabase.JournalMode.WRITE_AHEAD_LOGGING)
+            .addCallback(object : RoomDatabase.Callback() {
+                override fun onCreate(db: androidx.sqlite.db.SupportSQLiteDatabase) {
+                    super.onCreate(db)
+                    // When the encrypted database is first created, import legacy data if it exists.
+                    // This runs within Room's transaction.
+                    legacyDump?.let { dump ->
+                        migrator.importLegacyData(db, dump)
+                    }
+                    // Mark the process as complete.
+                    migrator.markEncrypted()
+                }
+            })
             .build()
 
+        // Clear the key from memory after it has been passed to the factory.
         passphrase.fill(0)
 
-        legacyDump?.let { migrator.importLegacyData(database, it) }
-        migrator.markEncrypted()
+        // If no migration was needed, the onCreate callback might not run (if the DB already existed
+        // but was empty). We still need to mark the encryption check as "done" to avoid
+        // checking for the legacy file on every app start.
+        if (legacyDump == null) {
+            migrator.markEncrypted()
+        }
 
-        return database
+        return db
     }
 
     private const val DATABASE_NAME = "flagdrive.db"

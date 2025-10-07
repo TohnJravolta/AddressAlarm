@@ -54,6 +54,7 @@ android {
 
   packaging {
     resources.excludes += "/META-INF/{AL2.0,LGPL2.1}"
+    resources.excludes += "/META-INF/DEPENDENCIES"
   }
 }
 
@@ -64,8 +65,9 @@ dependencies {
   implementation("androidx.room:room-ktx:$roomVersion") // Ensured version
   kapt("androidx.room:room-compiler:$roomVersion") // Ensured version
   implementation("androidx.sqlite:sqlite-ktx:2.4.0")
-  implementation("net.zetetic:android-database-sqlcipher:4.5.5")
+  implementation("net.zetetic:android-database-sqlcipher:4.5.4")
   implementation("androidx.security:security-crypto:1.1.0-alpha06")
+  implementation("com.google.http-client:google-http-client-gson:1.42.3")
 
   val composeBom = platform("androidx.compose:compose-bom:2024.06.00")
   implementation(composeBom)
