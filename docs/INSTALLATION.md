@@ -13,7 +13,7 @@ This guide walks you through installing the AddressAlarm Android application fro
    - Grant permission to the browser or file manager you will use to open the APK.
 
 ## 2. Download the APK
-1. Visit the AddressAlarm GitHub Releases page: <https://github.com/TohnJravolta/AAT/releases>.
+1. Visit the AddressAlarm GitHub Releases page: <https://github.com/TohnJravolta/AddressAlarm/releases>.
 2. Download the latest `addressalarm-<version>.apk` asset to your device.
 3. (Optional) Verify the checksum against the value listed in `RELEASE.md` for additional assurance.
 

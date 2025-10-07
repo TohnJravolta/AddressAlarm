@@ -78,7 +78,7 @@ fun DbMainScreen(
                     showDataActions = false
                 }
             )
-            Divider()
+            HorizontalDivider()
             ListItem(
                 headlineContent = { Text("Import (coming soon)") },
                 supportingContent = { Text("CSV / JSON wizard") },
@@ -161,7 +161,7 @@ fun DbMainScreen(
                         ElevatedCard(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .animateItemPlacement()
+                                .animateItem()
                                 .clickable {
                                     if (bulkMode) {
                                         if (checked) selectedIds.remove(place.id) else selectedIds.add(place.id)

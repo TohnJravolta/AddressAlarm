@@ -38,8 +38,8 @@ Originally designed with gig workers in mind, the tool now serves a much broader
 ### Build & Run
 1. Clone this repo:
    ```bash
-   git clone https://github.com/TohnJravolta/AAT.git
-   cd AAT
+   git clone https://github.com/TohnJravolta/AddressAlarm.git
+   cd AddressAlarm
    ```
 2. Open the project in Android Studio
 3. Let Gradle sync
