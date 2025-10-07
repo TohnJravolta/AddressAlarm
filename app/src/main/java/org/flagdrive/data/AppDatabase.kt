@@ -6,7 +6,7 @@ import androidx.room.TypeConverters
 
 @Database(
     entities = [FlaggedPlace::class],
-    version = 1,
+    version = 2,
     exportSchema = false // Changed to false to suppress warning
 )
 @TypeConverters(Converters::class)
