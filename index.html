@@ -996,9 +996,6 @@ Maps / Gig App ➜ Small overlay reminder just for you
             if (!tooltipText) return;
             tooltipText.style.setProperty('--tooltip-shift', '0px');
             requestAnimationFrame(() => {
-                if (window.getComputedStyle(tooltipText).visibility !== 'visible') {
-                    return;
-                }
                 const rect = tooltipText.getBoundingClientRect();
                 const viewportPadding = 16;
                 let shift = 0;
