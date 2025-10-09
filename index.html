@@ -234,6 +234,13 @@
       .section-inner {
         max-width: var(--max-width);
         margin: 0 auto;
+        text-align: center;
+      }
+
+      .section-inner p {
+        text-align: center;
+        margin-left: auto;
+        margin-right: auto;
       }
 
         section h2 {
@@ -262,6 +269,7 @@
         box-shadow: inset 0 0 15px rgba(0, 255, 157, 0.1), 0 0 5px rgba(0, 255, 157, 0.1);
         transition: all 0.3s ease;
         max-width: 100%;
+        text-align: center;
       }
 
       .card:hover {
@@ -275,6 +283,12 @@
         color: var(--primary-glow);
         font-family: 'Press Start 2P', cursive;
         font-size: 1rem;
+        text-align: center;
+      }
+
+      .card p {
+        margin-left: auto;
+        margin-right: auto;
       }
 
       #how-it-works ol {
@@ -314,6 +328,70 @@
           word-break: keep-all;
           overflow-wrap: normal;
           hyphens: none;
+          text-align: center;
+      }
+
+      .build-info {
+        font-family: 'Press Start 2P', cursive;
+        font-size: 0.85rem;
+        letter-spacing: 0.05em;
+        margin: 0 auto 1rem;
+        display: inline-block;
+        padding: 0.5rem 1rem;
+        border: 1px solid var(--border-color);
+        border-radius: var(--border-radius);
+        background: rgba(0, 255, 157, 0.08);
+        color: var(--primary-glow);
+        text-transform: uppercase;
+      }
+
+      .badge {
+        display: inline-block;
+        margin-top: 0.75rem;
+        padding: 0.35rem 0.75rem;
+        border-radius: var(--border-radius);
+        background: rgba(0, 255, 157, 0.12);
+        color: var(--primary-glow);
+        font-size: 0.8rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+      }
+
+      .roadmap-list {
+        width: 100%;
+        gap: 1.5rem;
+        padding: 0;
+      }
+
+      .roadmap-list li {
+        flex: 1 1 260px;
+        max-width: 100%;
+        padding: 1.5rem 1.25rem;
+        border-style: solid;
+        border-width: 1px;
+        border-color: var(--border-color);
+        background: var(--surface);
+        border-radius: var(--border-radius);
+        box-shadow: inset 0 0 10px rgba(0, 255, 157, 0.12);
+      }
+
+      .roadmap-list li strong {
+        display: block;
+        font-size: 0.95rem;
+        margin-bottom: 0.5rem;
+      }
+
+      .roadmap-list li p {
+        font-weight: 400;
+        color: var(--text);
+        line-height: 1.6;
+        margin-bottom: 0;
+      }
+
+      .roadmap-list li.completed {
+        border-color: rgba(0, 255, 157, 0.4);
+        box-shadow: inset 0 0 20px rgba(0, 255, 157, 0.2);
       }
 
       @media (max-width: 520px) {
@@ -340,6 +418,31 @@
 
       .footer p {
           margin: 0.5rem 0;
+      }
+
+      .kofi-icon {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 3rem;
+        height: 3rem;
+        border-radius: 50%;
+        border: 2px solid var(--secondary-glow);
+        color: var(--secondary-glow);
+        font-size: 1.4rem;
+        box-shadow: 0 0 18px rgba(255, 0, 193, 0.35);
+        transition: transform 0.2s ease, box-shadow 0.2s ease, color 0.2s ease, border-color 0.2s ease, background 0.2s ease;
+        margin-top: 1.25rem;
+      }
+
+      .kofi-icon:hover,
+      .kofi-icon:focus {
+        transform: translateY(-3px);
+        box-shadow: 0 0 26px rgba(255, 0, 193, 0.6);
+        background: rgba(255, 0, 193, 0.12);
+        color: #fff;
+        border-color: rgba(255, 0, 193, 0.85);
+        text-decoration: none;
       }
 
       .ascii-diagram {
@@ -464,6 +567,20 @@
         box-shadow: 0 4px 8px rgba(0,0,0,0.15);
       }
 
+      body.light-mode .kofi-icon {
+        background: #fff;
+        border-color: var(--secondary-glow);
+        color: var(--secondary-glow);
+        box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+      }
+
+      body.light-mode .kofi-icon:hover,
+      body.light-mode .kofi-icon:focus {
+        background: rgba(255, 0, 193, 0.15);
+        color: #a0006d;
+        border-color: rgba(255, 0, 193, 0.75);
+      }
+
       body.light-mode .card {
         box-shadow: 0 2px 4px rgba(0,0,0,0.05);
       }
@@ -499,9 +616,16 @@
           gap: 1.5rem;
         }
         .nav-links {
-          flex-wrap: wrap;
-          justify-content: center;
-          gap: 1rem 1.5rem;
+          flex-direction: column;
+          align-items: center;
+          width: 100%;
+          gap: 0.8rem;
+        }
+        .nav-links a {
+          display: block;
+          width: 100%;
+          text-align: center;
+          font-size: 0.68rem; /* ~15% smaller on mobile */
         }
       }
 
@@ -549,6 +673,7 @@
             <a href="#how-it-works">How It Works</a>
             <a href="#download">Download</a>
             <a href="#roadmap">Roadmap</a>
+            <a href="#support">Support</a>
             <a href="https://github.com/TohnJravolta/AAT" target="_blank" rel="noopener">GitHub</a>
           </div>
           <button id="theme-switcher" title="Toggle theme">☀️</button>
@@ -562,18 +687,19 @@
         <p>
           AddressAlarm is a free, <a href="#open-source" class="tooltip">open-source<span class="tooltip-text">The app's code is public and can be reviewed by anyone. Click to learn more.</span></a> Android app that runs 100% on-device. It watches for addresses you've flagged and alerts you discreetly, helping you avoid risky, curious, or problematic locations before you commit.
         </p>
-        <a class="button" href="https://github.com/TohnJravolta/AddressAlarm/releases/tag/v0.1.42-alpha" target="_blank" rel="noopener">
-          Download the Latest APK
+        <p class="build-info">Current build: v0.2.42</p>
+        <span class="badge">Field Test Build 2</span>
+        <a class="button" href="https://github.com/TohnJravolta/AddressAlarm/releases/tag/v0.2.42" target="_blank" rel="noopener">
+          Download the latest version of the app here
         </a>
         <p class="small-print">
-          Current test build installs as <strong>FlagDrive</strong>. This is normal! The official name will be used in a future release.
-          <br>Follow the <a href="docs/INSTALLATION.md">full installation guide</a> for setup help.
+          Grab the refreshed build and follow the <a href="docs/INSTALLATION.md">full installation guide</a> so your device is ready on install day.
         </p>
       </section>
 
       <section id="who-is-it-for">
         <div class="section-inner">
-          <h2>An essential tool for professionals and public</h2>
+          <h2>An essential tool for professionals and the public</h2>
           <p>Originally built for gig workers, AddressAlarm is now a vital tool for anyone who navigates unfamiliar locations.</p>
           <div class="features-grid">
             <div class="card">
@@ -686,7 +812,7 @@ Maps / Gig App ➜ Small overlay reminder just for you
           <h2>Getting Started is Simple</h2>
           <ol>
             <li><strong>Download the APK</strong> from the latest GitHub release.</li>
-            <li><strong>Install the app</strong> and enable the "FlagDrive" accessibility service in your phone's settings.</li>
+            <li><strong>Install the app</strong> and enable the "AddressAlarm" accessibility service in your phone's settings.</li>
             <li><strong>Build your watchlist</strong> by adding addresses, notes, and tags.</li>
             <li><strong>Select which apps to monitor</strong> (e.g., Google Maps, Uber Driver).</li>
             <li><strong>Get alerted!</strong> When a flagged address appears in a monitored app, a warning overlay will appear.</li>
@@ -701,10 +827,12 @@ Maps / Gig App ➜ Small overlay reminder just for you
         <div class="section-inner" style="text-align: center;">
             <h2>Download AddressAlarm</h2>
             <p>The app is free, <a href="#open-source" class="tooltip">open-source<span class="tooltip-text">The app's code is public and can be reviewed by anyone. Click to learn more.</span></a>, and ready to install.</p>
-            <a class="button" href="https://github.com/TohnJravolta/AddressAlarm/releases/tag/v0.1.42-alpha" target="_blank" rel="noopener">
-              Download v0.1.42-alpha
+            <p class="build-info">Current build: v0.2.42</p>
+            <span class="badge">Field Test Build 2</span>
+            <a class="button" href="https://github.com/TohnJravolta/AddressAlarm/releases/tag/v0.2.42" target="_blank" rel="noopener">
+              Download the latest version of the app here
             </a>
-            <p class="small-print">Requires Android 8.0 (Oreo) or newer.</p>
+            <p class="small-print">Freshened field test build with stability fixes. Requires Android 8.0 (Oreo) or newer.</p>
         </div>
       </section>
 
@@ -712,17 +840,48 @@ Maps / Gig App ➜ Small overlay reminder just for you
         <div class="section-inner">
           <h2>What’s Next?</h2>
           <p>AddressAlarm is actively developed. Here are some of the major features planned for the future:</p>
-          <ul class="list-inline">
-            <li>Fuzzy address matching (e.g., "Apt 4B" vs "Unit 4B")</li>
-            <li>Encrypted on-device storage</li>
-            <li>Optional voice and TTS alerts</li>
-            <li>In-app onboarding tour for new users</li>
-            <li>Distribution via F-Droid</li>
+          <ul class="list-inline roadmap-list">
+            <li class="completed">
+              <strong>Encrypted storage for watchlists</strong>
+              <span class="badge">Shipped Jan 15, 2025</span>
+              <p>Your watchlist now stays encrypted at rest so sensitive notes never leave your device unprotected.</p>
+            </li>
+            <li>
+              <strong>Fuzzy address matching</strong>
+              <p>Match "Apt 4B" with "Unit 4B" and other tricky variants so nothing slips through.</p>
+            </li>
+            <li>
+              <strong>Optional voice and TTS alerts</strong>
+              <p>Enable spoken cues for hands-free awareness while you stay focused on the road.</p>
+            </li>
+            <li>
+              <strong>Guided onboarding tour</strong>
+              <p>Walk new users through setup and best practices right inside the app.</p>
+            </li>
+            <li>
+              <strong>Distribution via F-Droid</strong>
+              <p>Offer an easy, privacy-respecting install path outside of manual APK downloads.</p>
+            </li>
           </ul>
           <p>
             See the <a href="ROADMAP.md">full roadmap</a> for more, or suggest a feature on
             <a href="https://github.com/TohnJravolta/AAT/issues" target="_blank" rel="noopener">GitHub</a>.
           </p>
+        </div>
+      </section>
+
+      <section id="support" class="alternate-bg">
+        <div class="section-inner">
+          <h2>Support the mission in good faith</h2>
+          <p>
+            AddressAlarm is designed, coded, and tested by a solo developer squeezing in late nights between 40–60 hour courier shifts.
+            If this project helps you stay safe, consider backing the hosting costs and future builds so it can keep shipping.
+          </p>
+          <p>
+            Every contribution is a vote for worker-built tools—covering server bills today and buying time to craft tomorrow's safety updates.
+            Choose a simple monthly contribution or a one-time donation—whatever fits your budget keeps the alerts flowing for everyone relying on them.
+          </p>
+          <a class="button" href="https://ko-fi.com/tohnjburray" target="_blank" rel="noopener">Support AddressAlarm</a>
         </div>
       </section>
 
@@ -777,6 +936,15 @@ Maps / Gig App ➜ Small overlay reminder just for you
         <a href="PRIVACY_POLICY.md">Privacy Policy</a> &bull;
         <a href="TERMS.md">Terms of Use</a> &bull;
         <a href="https://github.com/TohnJravolta/AAT" target="_blank" rel="noopener">View Source on GitHub</a>
+      </p>
+      <p>
+        <a
+          class="kofi-icon"
+          href="https://ko-fi.com/tohnjburray"
+          target="_blank"
+          rel="noopener"
+          aria-label="Support AddressAlarm development via Ko-fi"
+        >☕</a>
       </p>
     </footer>
     <script>
