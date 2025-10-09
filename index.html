@@ -521,6 +521,7 @@
         text-decoration: none;
       }
       .tooltip .tooltip-text {
+        --tooltip-shift: 0px;
         visibility: hidden;
         width: 220px;
         max-width: min(220px, calc(100vw - 2.5rem));
@@ -533,9 +534,9 @@
         z-index: 10;
         bottom: 140%;
         left: 50%;
-        transform: translateX(-50%);
+        transform: translateX(calc(-50% + var(--tooltip-shift)));
         opacity: 0;
-        transition: opacity 0.3s;
+        transition: opacity 0.3s, transform 0.2s ease;
         border: 1px solid var(--border-color);
         box-shadow: 0 5px 15px rgba(0,0,0,0.3);
         pointer-events: none;
@@ -985,6 +986,50 @@ Maps / Gig App ➜ Small overlay reminder just for you
         // Load saved theme from localStorage
         const savedTheme = localStorage.getItem('theme') || 'dark';
         setTheme(savedTheme);
+
+        // --- Tooltip Positioning ---
+        const tooltipEntries = Array.from(document.querySelectorAll('.tooltip'))
+            .map(trigger => ({ trigger, text: trigger.querySelector('.tooltip-text') }))
+            .filter(entry => entry.text);
+
+        const adjustTooltipPosition = (tooltipText) => {
+            if (!tooltipText) return;
+            tooltipText.style.setProperty('--tooltip-shift', '0px');
+            requestAnimationFrame(() => {
+                if (window.getComputedStyle(tooltipText).visibility !== 'visible') {
+                    return;
+                }
+                const rect = tooltipText.getBoundingClientRect();
+                const viewportPadding = 16;
+                let shift = 0;
+                if (rect.left < viewportPadding) {
+                    shift = viewportPadding - rect.left;
+                } else if (rect.right > window.innerWidth - viewportPadding) {
+                    shift = (window.innerWidth - viewportPadding) - rect.right;
+                }
+                tooltipText.style.setProperty('--tooltip-shift', `${shift}px`);
+            });
+        };
+
+        tooltipEntries.forEach(({ trigger, text }) => {
+            const showHandler = () => adjustTooltipPosition(text);
+            const resetHandler = () => text.style.setProperty('--tooltip-shift', '0px');
+            trigger.addEventListener('pointerenter', showHandler);
+            trigger.addEventListener('focusin', showHandler);
+            trigger.addEventListener('pointerleave', resetHandler);
+            trigger.addEventListener('focusout', resetHandler);
+            trigger.addEventListener('touchstart', showHandler, { passive: true });
+            trigger.addEventListener('touchend', resetHandler, { passive: true });
+            trigger.addEventListener('touchcancel', resetHandler, { passive: true });
+        });
+
+        window.addEventListener('resize', () => {
+            tooltipEntries.forEach(({ text }) => {
+                if (window.getComputedStyle(text).visibility === 'visible') {
+                    adjustTooltipPosition(text);
+                }
+            });
+        });
 
         // --- Visual Effects ---
         const initVisuals = () => {
