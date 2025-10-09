@@ -13,5 +13,5 @@ dependencyResolutionManagement {
     }
   }
 }
-rootProject.name = "FlagDriveSeed"
+rootProject.name = "AddressAlarm"
 include(":app")
