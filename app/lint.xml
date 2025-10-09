@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<lint>
+    <!-- The minSdk is 26, so API 11 warnings are not relevant -->
+    <issue id="InlinedApi" severity="ignore" />
+    
+    <!-- SQLCipher uses reflection and native code, these warnings are expected -->
+    <issue id="UnsafeDynamicallyLoadedCode" severity="informational" />
+    
+    <!-- Room generates code that may trigger this -->
+    <issue id="RestrictedApi" severity="informational" />
+    
+    <!-- Accessibility services need to ignore certain optimizations -->
+    <issue id="Wakelock" severity="informational" />
+</lint>

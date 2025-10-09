@@ -1,81 +1,77 @@
-# AddressAlarm 🚨
+# AddressAlarm
 
-**AddressAlarm** is an open-source Android app that helps anyone flag and avoid risky, curious or problematic addresses.
-It runs **100% on-device**, watching for addresses through Accessibility, and alerts you when a location matches your personal "do-not-enter" or "use caution" list.
+AddressAlarm is an open-source Android app that helps anyone avoid risky, curious, or problematic addresses. The app runs entirely on-device, watching for locations through Android accessibility services and alerting you whenever a monitored app shows an address on your personal watchlist.
 
-##  🚨 ***Test build label:*** The current pre-release APK installs under the launcher codename: **FlagDrive** 
-### You will see this name when granting permissions or enabling the accessibility service. The branding will switch to AddressAlarm in a future build. 🚨
+Originally designed with gig workers in mind, AddressAlarm now supports law enforcement, social workers, real estate agents, contractors, utility workers, and the public at large.
 
-Originally designed with gig workers in mind, the tool now serves a much broader purpose — useful for **law enforcement, social workers, real estate agents, contractors, utility workers, and the general public** who want a personal safety layer for navigating locations.
-
-### Download it here: https://github.com/TohnJravolta/AddressAlarm/releases/tag/v0.1.42-alpha
+**Latest build:** https://github.com/TohnJravolta/AddressAlarm/releases/tag/v0.2.42
 
 ---
 
-## ✨ Features
+## Highlights in v0.2.42
 
-- **On-device matching** – No data leaves your phone
-- **Custom flags & tags** – Dangerous, hostile, unsafe pets, restricted zones, etc.
-- **Debounced alerts** – No notification spam
-- **Per-app visibility** – Works only on apps you enable
-- **Simple, safety-first UI** – Large text, straightforward menus
-- **Import/Export** – Save and restore your flagged addresses
-
----
-
-## 📱 Screenshots (Coming Soon)
-*(Add screenshots here once you have a stable build to show)*
+- Per-app monitoring controls let you choose exactly which navigation, gig, or messaging apps AddressAlarm watches.
+- SQLCipher-backed storage keeps the watchlist encrypted with a key that only the device can unlock.
+- Delete confirmations (single and bulk) prevent accidental data loss.
+- The in-app support dialog links directly to the maintainer's Ko-fi for voluntary support.
+- A first-run license screen bundles the full LICENSE text with a plain-language summary so acceptance is stored locally.
 
 ---
 
-## 🚀 Getting Started
+## Core features
+
+- On-device matching: no data or addresses ever leave your phone.
+- Custom flags and tags: note why a location matters so you can act with context.
+- Safety-first alerts: debounced overlays and gig-app warnings reduce noise without hiding risk.
+- Import and export: back up your data or move it between devices.
+
+---
+
+## Getting started
 
 ### Requirements
 - Android Studio (latest stable)
-- JDK 17+
-- Gradle (bundled in Android Studio)
+- JDK 17 or newer
+- Gradle (bundled with Android Studio)
 
-### Build & Run
-1. Clone this repo:
+### Build and run
+1. Clone the repository:
    ```bash
-   git clone https://github.com/TohnJravolta/AAT.git
-   cd AAT
+   git clone https://github.com/TohnJravolta/AddressAlarm.git
+   cd AddressAlarm
    ```
-2. Open the project in Android Studio
-3. Let Gradle sync
-4. Build & Run on an Android device or emulator
+2. Open the project in Android Studio and let Gradle sync.
+3. Build and run on an Android device or emulator.
 
-Additional guides are available in the [`docs/`](docs) directory:
-- [Overview](docs/OVERVIEW.md) – Project background and audience (also notes the temporary FlagDrive label).
-- [Installation](docs/INSTALLATION.md) – Sideloading, accessibility walkthroughs for Pixel/Samsung, and other setup details.
-
----
-
-## 🛡️ Privacy & Safety
-
-- **No auto-decline/accept**: The driver always makes the final choice.
-- **No server logging**: Data stays private, local-only.
-- **Assistive only**: This tool is meant as a memory aid, not automation.
+See the [`docs/`](docs) directory for more help:
+- [Overview](docs/OVERVIEW.md) - Project background and audience.
+- [Installation](docs/INSTALLATION.md) - Sideloading and accessibility walkthroughs for popular devices.
 
 ---
 
-## 🛠 Roadmap
+## Privacy and safety
 
-See [ROADMAP.md](ROADMAP.md) for the full roadmap and upcoming milestones.
-
----
-
-## 🤝 Contributing
-
-Read [CONTRIBUTING.md](CONTRIBUTING.md) for contribution guidelines, coding standards, and the pull-request process.
-
-Need help or have questions? Check out [SUPPORT.md](SUPPORT.md) for support options, including security reporting.
+- No auto-decline or accept: you always decide what happens next.
+- No server logging: everything remains local to the device.
+- Assistive only: AddressAlarm surfaces reminders; it never acts on your behalf.
 
 ---
 
-## 📜 License
+## Roadmap
 
-Licensed under the **GNU AGPL-3.0**.
-Copyright (C) 2025 **TohnJravolta and AddressAlarm Contributors**.
+See [ROADMAP.md](ROADMAP.md) for upcoming milestones and planned enhancements.
+
+---
+
+## Contributing
+
+Review [CONTRIBUTING.md](CONTRIBUTING.md) for contribution guidelines, coding standards, and the pull-request process. Need help? Visit [SUPPORT.md](SUPPORT.md) for support options, including responsible disclosure steps.
+
+---
+
+## License
+
+Licensed under the GNU AGPL-3.0.  
+Copyright (C) 2025 TohnJravolta and AddressAlarm contributors.
 
 See the [LICENSE](LICENSE) file for details.

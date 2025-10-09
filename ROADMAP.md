@@ -4,7 +4,7 @@ This roadmap highlights major initiatives planned for upcoming releases. Timelin
 
 ## Near-term
 - **Fuzzy address matching:** Handle apartment/unit variations and common abbreviations.
-- **Encrypted database storage:** Protect watchlists at rest using platform crypto APIs.
+- ~~**Encrypted database storage:** Protect watchlists at rest using platform crypto APIs.~~ _Completed in v0.2.42 via SQLCipher-backed Room database._
 - **Voice/TTS alerts:** Provide audible cues when a risky address is detected.
 - **Screenshot capture tooling:** Enable maintainers to produce up-to-date marketing assets.
 

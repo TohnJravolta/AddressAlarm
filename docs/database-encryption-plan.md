@@ -1,7 +1,7 @@
 # Database Encryption Plan
 
 ## Current Storage
-- The app uses Android Room to persist `FlaggedPlace` entities in a plain-text SQLite database file named `flagdrive.db`.
+- The app uses Android Room to persist `FlaggedPlace` entities in a plain-text SQLite database file named `addressalarm.db`.
 - The database is built via `Room.databaseBuilder` without any encryption-related configuration, so data is stored unencrypted on disk.
 
 ## Immediate Encryption Strategy
@@ -48,7 +48,7 @@ These are the concrete edits a single Codex agent can apply in one prompt to shi
    - Ensure the open-helper configuration uses `setJournalMode(RoomDatabase.JournalMode.WRITE_AHEAD_LOGGING)` because SQLCipher requires it for best performance.
 
 4. **Migrate plaintext data**
-   - Write a one-off `Migration(1, 2)` class that reads the existing `flagdrive.db`, copies rows into the encrypted instance via `INSERT INTO flaggedplace SELECT * FROM flaggedplace`, and deletes the legacy file with `context.getDatabasePath("flagdrive.db").delete()` after success.
+   - Write a one-off `Migration(1, 2)` class that reads the existing `addressalarm.db`, copies rows into the encrypted instance via `INSERT INTO flaggedplace SELECT * FROM flaggedplace`, and deletes the legacy file with `context.getDatabasePath("addressalarm.db").delete()` after success.
    - Register the migration on the builder and bump the Room schema version.
 
 5. **Verification hooks**

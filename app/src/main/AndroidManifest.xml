@@ -3,8 +3,19 @@
     <!-- Android 13+ notification permission -->
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
 
+    <!-- Package visibility for Android 11+ (API 30+) to allow
+         enumerating user-facing launcher apps (e.g., Maps, Gmail). -->
+    <queries>
+        <intent>
+            <action android:name="android.intent.action.MAIN" />
+            <category android:name="android.intent.category.LAUNCHER" />
+        </intent>
+        <!-- Explicitly include Google Maps to be safe -->
+        <package android:name="com.google.android.apps.maps" />
+    </queries>
+
     <application
-        android:label="FlagDrive"
+        android:label="AddressAlarm"
         android:icon="@android:drawable/sym_def_app_icon"
         android:allowBackup="true"
         android:supportsRtl="true"
@@ -23,6 +34,8 @@
                 android:resource="@xml/accessibility_config" />
         </service>
 
+        <receiver android:name=".service.NotificationDismissReceiver" android:exported="false"/>
+
         <activity
             android:name=".ui.MainActivity"
             android:exported="true">
@@ -31,6 +44,10 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <activity
+            android:name=".ui.SettingsActivity"
+            android:exported="false" />
 
     </application>
 </manifest>
