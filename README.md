@@ -26,7 +26,8 @@ The video covers downloading the APK, granting accessibility permissions, enabli
 ---
 
 ## 📱 Screenshots (Coming Soon)
-*(Add screenshots here once you have a stable build to show)*
+
+
 ## Core features
 
 - On-device matching: no data or addresses ever leave your phone.
