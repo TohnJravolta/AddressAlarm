@@ -1,0 +1,19 @@
+# Website Changelog
+
+## v0.2.42 Marketing Refresh
+- Rebranded remaining site references from the temporary "FlagDrive" name to AddressAlarm.
+- Highlighted build v0.2.42 in the hero and download sections, including updated call-to-action text.
+- Renamed the features section header to emphasize both professionals and the public.
+- Marked encrypted watchlist storage as shipped in the roadmap with supporting copy and styling tweaks.
+- Center-aligned section content and cards for consistent layout across viewports.
+- Added a good faith support section inviting donations to sustain hosting and future development.
+
+## v0.2.42 Follow-up Tweaks
+- Updated the hero and download CTAs to ship the v0.2.42 APK and spotlight it as the second field test build.
+- Softened the support appeal copy to focus on sustaining worker-built tooling and future updates.
+- Tightened mobile navigation spacing and sizing so each link sits on its own line without crowding.
+
+## v0.2.42 CTA & Support Refinements
+- Unified the download CTA to a single "latest build" button across hero and download sections.
+- Reworked the support messaging to highlight monthly contributions and one-time donations without referencing Ko-fi in copy.
+- Added a Ko-fi themed footer icon to drive additional support clicks while fitting the site's neon aesthetic.

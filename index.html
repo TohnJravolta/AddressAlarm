@@ -1,0 +1,1509 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>AddressAlarm – On-device safety alerts for risky addresses</title>
+    <meta
+      name="description"
+      content="AddressAlarm is an open-source Android accessibility companion that warns you about risky addresses from your personal watchlist."
+    />
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=Lexend:wght@400;600;700&family=Press+Start+2P&display=swap');
+
+      :root {
+        /* Dark Theme (Default) */
+        --primary-glow: #00ff9d;
+        --secondary-glow: #ff00c1;
+        --background: #121212;
+        --surface: #1e1e1e;
+        --text: #e0e0e0;
+        --text-header: #ffffff;
+        --muted: #888888;
+        --border-color: rgba(0, 255, 157, 0.3);
+        --max-width: 960px;
+        --border-radius: 8px;
+      }
+
+      body.light-mode {
+        /* Light Theme */
+        --primary-glow: #006442;
+        --secondary-glow: #a0006d;
+        --background: #f5f5f5;
+        --surface: #ffffff;
+        --text: #212121;
+        --text-header: #000000;
+        --muted: #757575;
+        --border-color: #e0e0e0;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html {
+        scroll-behavior: smooth;
+        width: 100%;
+        max-width: 100%;
+        overflow-x: hidden;
+      }
+
+      body {
+        margin: 0;
+        font-family: 'Lexend', sans-serif; /* Dyslexia-friendly font */
+        background: var(--background);
+        color: var(--text);
+        line-height: 1.8;
+        background-image: radial-gradient(var(--muted) 0.5px, transparent 0.5px);
+        background-size: 15px 15px;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        overflow-x: hidden; /* Prevent horizontal scroll */
+        max-width: 100%;
+      }
+
+      a {
+        color: var(--primary-glow);
+        text-decoration: none;
+        transition: all 0.2s ease-in-out;
+      }
+
+      a:hover,
+      a:focus {
+        color: #fff;
+        text-shadow: 0 0 10px var(--primary-glow);
+      }
+
+      header {
+        background: rgba(18, 18, 18, 0.7);
+        backdrop-filter: blur(10px);
+        position: sticky;
+        top: 0;
+        z-index: 1000;
+        border-bottom: 1px solid var(--border-color);
+      }
+
+      .navbar {
+        max-width: var(--max-width);
+        margin: 0 auto;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0.75rem 1.5rem;
+        gap: 2rem; /* Increased gap */
+      }
+
+      .navbar strong {
+        font-family: 'Press Start 2P', cursive; /* Retro pixel font */
+        font-size: 1rem;
+        color: var(--text-header);
+        text-shadow: 0 0 5px var(--primary-glow);
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        white-space: nowrap; /* Prevent logo text from wrapping */
+      }
+
+      #bouncing-logo {
+        display: inline-block;
+        animation: bounce 2s infinite ease-in-out;
+      }
+
+      @keyframes bounce {
+        0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+        40% { transform: translateY(-10px); }
+        60% { transform: translateY(-5px); }
+      }
+
+      .nav-controls {
+        display: flex;
+        align-items: center;
+        gap: 1.5rem;
+      }
+
+      .nav-links {
+        display: flex;
+        gap: 1.5rem;
+      }
+
+      #theme-switcher {
+        background: none;
+        border: 1px solid var(--muted);
+        color: var(--text);
+        font-size: 1.2rem;
+        cursor: pointer;
+        padding: 0.25rem 0.5rem;
+        border-radius: var(--border-radius);
+        transition: all 0.2s ease;
+        line-height: 1; /* Aligns emoji better */
+      }
+
+      #theme-switcher:hover {
+        color: var(--primary-glow);
+        border-color: var(--primary-glow);
+      }
+
+      body.light-mode #theme-switcher {
+        border-color: var(--border-color);
+        color: var(--text);
+      }
+
+      body.light-mode #theme-switcher:hover {
+        color: var(--primary-glow);
+        border-color: var(--primary-glow);
+      }
+
+      .nav-links a {
+        font-family: 'Press Start 2P', cursive;
+        font-size: 0.8rem;
+        text-decoration: none;
+        color: var(--text);
+        transition: all 0.2s ease;
+      }
+
+      .nav-links a:hover,
+      .nav-links a:focus {
+        color: var(--primary-glow);
+        text-shadow: 0 0 8px var(--primary-glow);
+        text-decoration: none;
+      }
+
+      .hero {
+        padding: 6rem 1.5rem 5rem;
+        text-align: center;
+      }
+
+      .hero h1 {
+        font-family: 'Press Start 2P', cursive;
+        font-size: clamp(1.1rem, 3.75vw + 0.25rem, 3rem);
+        color: var(--text-header);
+        text-shadow: 0 0 15px var(--primary-glow), 0 0 25px var(--primary-glow);
+        margin-bottom: 1.5rem;
+        line-height: 1.4;
+        word-break: keep-all;
+        overflow-wrap: normal;
+        hyphens: none;
+      }
+
+      .hero p {
+        max-width: 720px;
+        margin: 0 auto 2.5rem;
+        color: var(--text);
+        font-size: 1.1rem;
+      }
+
+      .small-print {
+        max-width: 640px;
+        margin: 1.5rem auto 0;
+        font-size: 0.9rem;
+        color: var(--muted);
+      }
+
+      .button {
+        display: inline-block;
+        padding: 1rem 2.5rem;
+        background: transparent;
+        color: var(--primary-glow);
+        border: 2px solid var(--primary-glow);
+        border-radius: var(--border-radius);
+        font-weight: 600;
+        font-family: 'Press Start 2P', cursive;
+        text-decoration: none;
+        box-shadow: 0 0 15px rgba(0, 255, 157, 0.3);
+        transition: all 0.2s ease;
+      }
+
+      .button:hover,
+      .button:focus {
+        background: var(--primary-glow);
+        color: var(--background);
+        box-shadow: 0 0 25px rgba(0, 255, 157, 0.6);
+        text-shadow: none;
+        transform: translateY(-3px);
+        text-decoration: none;
+      }
+
+      section {
+        padding: 5rem 1.5rem;
+        border-bottom: 1px solid var(--border-color);
+      }
+      section:last-of-type {
+          border-bottom: none;
+      }
+
+      .section-inner {
+        max-width: var(--max-width);
+        margin: 0 auto;
+        text-align: center;
+      }
+
+      .section-inner p {
+        text-align: center;
+        margin-left: auto;
+        margin-right: auto;
+      }
+
+        section h2 {
+          text-align: center;
+          font-family: 'Press Start 2P', cursive;
+          font-size: clamp(1.05rem, 3.5vw + 0.2rem, 2rem);
+          color: var(--text-header);
+          text-shadow: 0 0 10px var(--secondary-glow);
+          margin-bottom: 3rem;
+          word-break: keep-all;
+          overflow-wrap: normal;
+          hyphens: none;
+        }
+
+      .features-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+        gap: 2rem;
+      }
+
+      .card {
+        background: var(--surface);
+        border-radius: var(--border-radius);
+        padding: 2rem;
+        border: 1px solid var(--border-color);
+        box-shadow: inset 0 0 15px rgba(0, 255, 157, 0.1), 0 0 5px rgba(0, 255, 157, 0.1);
+        transition: all 0.3s ease;
+        max-width: 100%;
+        text-align: center;
+      }
+
+      .card:hover {
+          transform: translateY(-5px) scale(1.02);
+          box-shadow: inset 0 0 20px rgba(0, 255, 157, 0.2), 0 0 15px rgba(0, 255, 157, 0.3);
+      }
+
+      .card h3 {
+        margin-top: 0;
+        font-size: 1.25rem;
+        color: var(--primary-glow);
+        font-family: 'Press Start 2P', cursive;
+        font-size: 1rem;
+        text-align: center;
+      }
+
+      .card p {
+        margin-left: auto;
+        margin-right: auto;
+      }
+
+      .video-subtitle {
+        font-family: 'Press Start 2P', cursive;
+        font-size: clamp(0.9rem, 2.8vw + 0.1rem, 1.25rem);
+        color: var(--primary-glow);
+        text-shadow: 0 0 12px rgba(0, 255, 157, 0.5);
+        margin-bottom: 1rem;
+      }
+
+      .video-description {
+        max-width: 760px;
+        margin: 0 auto 2rem;
+        color: var(--text);
+      }
+
+      .video-wrapper {
+        position: relative;
+        width: 100%;
+        max-width: 960px;
+        margin: 0 auto 3rem;
+        padding-bottom: 56.25%;
+        border-radius: var(--border-radius);
+        overflow: hidden;
+        border: 1px solid var(--border-color);
+        box-shadow: 0 0 35px rgba(0, 255, 157, 0.12);
+        background: #000;
+      }
+
+      .video-wrapper iframe {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        border: 0;
+      }
+
+      #how-it-works ol {
+          list-style: none;
+          padding-left: 0;
+          max-width: 600px;
+          margin: 2rem auto;
+      }
+
+      #how-it-works li {
+          position: relative;
+          padding: 1rem;
+          margin-bottom: 1.5rem;
+          border: 1px dashed var(--border-color);
+          border-radius: var(--border-radius);
+      }
+
+      .list-inline {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 1rem;
+        padding-left: 0;
+        list-style: none;
+        text-align: center;
+      }
+
+      .list-inline li {
+          background: var(--surface);
+          padding: 0.5rem 1rem;
+          border-radius: var(--border-radius);
+          border: 1px solid var(--border-color);
+          font-weight: 600;
+          color: var(--primary-glow);
+          flex: 1 1 220px;
+          max-width: min(100%, 320px);
+          word-break: keep-all;
+          overflow-wrap: normal;
+          hyphens: none;
+          text-align: center;
+      }
+
+      .build-info {
+        font-family: 'Press Start 2P', cursive;
+        font-size: 0.85rem;
+        letter-spacing: 0.05em;
+        margin: 0 auto 1rem;
+        display: inline-block;
+        padding: 0.5rem 1rem;
+        border: 1px solid var(--border-color);
+        border-radius: var(--border-radius);
+        background: rgba(0, 255, 157, 0.08);
+        color: var(--primary-glow);
+        text-transform: uppercase;
+      }
+
+      .badge {
+        display: inline-block;
+        margin-top: 0.75rem;
+        padding: 0.35rem 0.75rem;
+        border-radius: var(--border-radius);
+        background: rgba(0, 255, 157, 0.12);
+        color: var(--primary-glow);
+        font-size: 0.8rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+      }
+
+      .roadmap-list {
+        width: 100%;
+        gap: 1.5rem;
+        padding: 0;
+      }
+
+      .roadmap-list li {
+        flex: 1 1 260px;
+        max-width: 100%;
+        padding: 1.5rem 1.25rem;
+        border-style: solid;
+        border-width: 1px;
+        border-color: var(--border-color);
+        background: var(--surface);
+        border-radius: var(--border-radius);
+        box-shadow: inset 0 0 10px rgba(0, 255, 157, 0.12);
+      }
+
+      .roadmap-list li strong {
+        display: block;
+        font-size: 0.95rem;
+        margin-bottom: 0.5rem;
+      }
+
+      .roadmap-list li p {
+        font-weight: 400;
+        color: var(--text);
+        line-height: 1.6;
+        margin-bottom: 0;
+      }
+
+      .roadmap-list li.completed {
+        border-color: rgba(0, 255, 157, 0.4);
+        box-shadow: inset 0 0 20px rgba(0, 255, 157, 0.2);
+      }
+
+      @media (max-width: 520px) {
+        .hero h1 {
+          font-size: clamp(1rem, 6vw + 0.25rem, 2.4rem);
+        }
+
+        section h2 {
+          font-size: clamp(1rem, 5.5vw + 0.1rem, 1.75rem);
+        }
+      }
+
+      .footer {
+        background: var(--background);
+        color: var(--muted);
+        text-align: center;
+        padding: 3rem 1.5rem;
+        border-top: 1px solid var(--border-color);
+      }
+
+      .footer a {
+        color: var(--primary-glow);
+      }
+
+      .footer p {
+          margin: 0.5rem 0;
+      }
+
+      .kofi-icon {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 3rem;
+        height: 3rem;
+        border-radius: 50%;
+        border: 2px solid var(--secondary-glow);
+        color: var(--secondary-glow);
+        font-size: 1.4rem;
+        box-shadow: 0 0 18px rgba(255, 0, 193, 0.35);
+        transition: transform 0.2s ease, box-shadow 0.2s ease, color 0.2s ease, border-color 0.2s ease, background 0.2s ease;
+        margin-top: 1.25rem;
+      }
+
+      .kofi-icon:hover,
+      .kofi-icon:focus {
+        transform: translateY(-3px);
+        box-shadow: 0 0 26px rgba(255, 0, 193, 0.6);
+        background: rgba(255, 0, 193, 0.12);
+        color: #fff;
+        border-color: rgba(255, 0, 193, 0.85);
+        text-decoration: none;
+      }
+
+      .ascii-diagram {
+        font-family: 'Courier New', Courier, monospace;
+        background: var(--surface);
+        border: 1px solid var(--border-color);
+        border-radius: var(--border-radius);
+        padding: 1rem;
+        white-space: pre-wrap;
+        word-break: keep-all;
+        font-size: 0.9rem;
+        line-height: 1.5;
+        margin: 1.5rem 0;
+      }
+
+      .trail {
+          position: absolute;
+          height: 8px;
+          width: 8px;
+          border-radius: 4px;
+          background: var(--primary-glow);
+          pointer-events: none;
+          box-shadow: 0 0 10px var(--primary-glow);
+      }
+
+      .tap-particle {
+          position: absolute;
+          height: 10px;
+          width: 10px;
+          border-radius: 50%;
+          background: var(--secondary-glow);
+          pointer-events: none;
+          opacity: 0.85;
+          transform: translate(-50%, -50%);
+          animation: tapBurst 600ms ease-out forwards;
+          box-shadow: 0 0 12px rgba(255, 0, 193, 0.6);
+      }
+
+      @keyframes tapBurst {
+          0% {
+              transform: translate(-50%, -50%) scale(1);
+              opacity: 1;
+          }
+          100% {
+              transform: translate(calc(-50% + var(--dx, 0px)), calc(-50% + var(--dy, 0px))) scale(0);
+              opacity: 0;
+          }
+      }
+
+      #music-player button {
+        background: none;
+        border: 1px solid var(--muted);
+        color: var(--muted);
+        font-family: 'Press Start 2P', cursive;
+        font-size: 0.7rem;
+        cursor: pointer;
+        padding: 0.5rem 1rem;
+        transition: all 0.2s ease;
+      }
+
+      #music-player button:hover {
+        color: var(--primary-glow);
+        border-color: var(--primary-glow);
+        box-shadow: 0 0 10px var(--primary-glow);
+      }
+
+      /* --- Tooltip Styles --- */
+      .tooltip {
+        position: relative;
+        cursor: help;
+        border-bottom: 1px dashed var(--primary-glow);
+        text-decoration: none;
+        color: inherit;
+      }
+      .tooltip:hover {
+        text-decoration: none;
+      }
+      .tooltip .tooltip-text {
+        --tooltip-shift: 0px;
+        visibility: hidden;
+        width: 220px;
+        max-width: min(220px, calc(100vw - 2.5rem));
+        background-color: var(--surface);
+        color: var(--text);
+        text-align: center;
+        border-radius: var(--border-radius);
+        padding: 10px;
+        position: absolute;
+        z-index: 10;
+        bottom: 140%;
+        left: 50%;
+        transform: translateX(calc(-50% + var(--tooltip-shift)));
+        opacity: 0;
+        transition: opacity 0.3s, transform 0.2s ease;
+        border: 1px solid var(--border-color);
+        box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        pointer-events: none;
+        word-break: break-word;
+      }
+      .tooltip:hover .tooltip-text {
+        visibility: visible;
+        opacity: 1;
+      }
+
+      /* --- Light Theme Overrides --- */
+      body.light-mode .navbar strong,
+      body.light-mode .nav-links a:hover,
+      body.light-mode .hero h1,
+      body.light-mode section h2,
+      body.light-mode .button:hover {
+        text-shadow: none;
+      }
+
+      body.light-mode .button {
+        background: var(--primary-glow);
+        color: #fff;
+        border-color: var(--primary-glow);
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      }
+      body.light-mode .button:hover {
+        background: #004d33; /* Darker shade for hover */
+        border-color: #004d33;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+      }
+
+      body.light-mode .kofi-icon {
+        background: #fff;
+        border-color: var(--secondary-glow);
+        color: var(--secondary-glow);
+        box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+      }
+
+      body.light-mode .kofi-icon:hover,
+      body.light-mode .kofi-icon:focus {
+        background: rgba(255, 0, 193, 0.15);
+        color: #a0006d;
+        border-color: rgba(255, 0, 193, 0.75);
+      }
+
+      body.light-mode .card {
+        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+      }
+      body.light-mode .card:hover {
+        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+      }
+
+      body.light-mode .video-wrapper {
+        border-color: rgba(0, 0, 0, 0.08);
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+      }
+
+      body.light-mode .video-subtitle {
+        text-shadow: none;
+        color: #006442;
+      }
+
+      body.light-mode .trail {
+        background: var(--primary-glow);
+        box-shadow: none;
+      }
+
+      body.light-mode .tap-particle {
+        background: var(--primary-glow);
+        box-shadow: 0 0 8px rgba(0, 255, 157, 0.5);
+      }
+
+      body.light-mode #music-player button:hover,
+      body.light-mode #music-player button:focus {
+        box-shadow: none;
+      }
+
+      @media (max-width: 768px) {
+        .navbar {
+          flex-direction: column;
+          gap: 1.5rem;
+        }
+        .navbar strong {
+          font-size: 0.85rem; /* Reduce font size on mobile */
+        }
+        .nav-controls {
+          flex-direction: column;
+          gap: 1.5rem;
+        }
+        .nav-links {
+          flex-direction: column;
+          align-items: center;
+          width: 100%;
+          gap: 0.8rem;
+        }
+        .nav-links a {
+          display: block;
+          width: 100%;
+          text-align: center;
+          font-size: 0.68rem; /* ~15% smaller on mobile */
+        }
+      }
+
+      @media (max-width: 600px) {
+        .hero {
+          padding: 5rem 1.25rem 4rem;
+        }
+        section {
+          padding: 3.5rem 1.25rem;
+        }
+        .hero p,
+        section p {
+          font-size: 1rem;
+        }
+        .features-grid {
+          gap: 1.5rem;
+          grid-template-columns: 1fr;
+        }
+        .card {
+          padding: 1.5rem 1.25rem;
+        }
+      }
+
+      @media (max-width: 480px) {
+        .hero h1 {
+          font-size: clamp(1rem, 9vw, 2.5rem);
+        }
+        section h2 {
+          font-size: clamp(1rem, 7vw, 1.75rem);
+        }
+        .card h3 {
+          font-size: clamp(0.85rem, 5vw, 1rem);
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <nav class="navbar">
+        <strong><span id="bouncing-logo" role="img" aria-label="Alarm emojis">🚨 AddressAlarm 🚨</span></strong>
+        <div class="nav-controls">
+          <div class="nav-links">
+            <a href="#who-is-it-for">Who It's For</a>
+            <a href="#features">Features</a>
+            <a href="#how-it-works">How It Works</a>
+            <a href="#download">Download</a>
+            <a href="#roadmap">Roadmap</a>
+            <a href="#support">Support</a>
+            <a href="https://github.com/TohnJravolta/AAT" target="_blank" rel="noopener">GitHub</a>
+          </div>
+          <button id="theme-switcher" title="Toggle theme">☀️</button>
+        </div>
+      </nav>
+    </header>
+
+    <main>
+      <section class="hero">
+        <h1>A personal safety layer for any address.</h1>
+        <p>
+          AddressAlarm is a free, <a href="#open-source" class="tooltip">open-source<span class="tooltip-text">The app's code is public and can be reviewed by anyone. Click to learn more.</span></a> Android app that runs 100% on-device. It watches for addresses you've flagged and alerts you discreetly, helping you avoid risky, curious, or problematic locations before you commit.
+        </p>
+        <p class="build-info">Current build: v0.2.42</p>
+        <span class="badge">Field Test Build 2</span>
+        <a class="button" href="https://github.com/TohnJravolta/AddressAlarm/releases/tag/v0.2.42" target="_blank" rel="noopener">
+          Download the latest version of the app here
+        </a>
+        <p class="small-print">
+          Grab the refreshed build and follow the <a href="docs/INSTALLATION.md">full installation guide</a> so your device is ready on install day.
+        </p>
+      </section>
+
+      <section id="who-is-it-for">
+        <div class="section-inner">
+          <h2>An essential tool for professionals and the public</h2>
+          <p>Originally built for gig workers, AddressAlarm is now a vital tool for anyone who navigates unfamiliar locations.</p>
+          <div class="features-grid">
+            <div class="card">
+              <h3>📮 Couriers &amp; Rural Carriers</h3>
+              <p>Privately note hard-to-find mailboxes, unsafe routes, or households that need extra caution before you pull up.</p>
+            </div>
+            <div class="card">
+              <h3>🚕 Taxi &amp; Rideshare Drivers</h3>
+              <p>Get a subtle warning before accepting pickups or drop-offs tied to dangerous requests, no-show zones, or past harassment.</p>
+            </div>
+            <div class="card">
+              <h3>🛠️ Gig Taskers &amp; On-Demand Pros</h3>
+              <p>Flag customers who weaponize tips, misrepresent jobs, or create unsafe conditions so you can plan safer alternatives.</p>
+            </div>
+            <div class="card">
+              <h3>👮 Law Enforcement &amp; Social Workers</h3>
+              <p>Get a heads-up when approaching a location with a known history of hostility or special circumstances.</p>
+            </div>
+            <div class="card">
+              <h3>🏡 Real Estate &amp; Contractors</h3>
+              <p>Tag properties with notes about access, hazards, or client-specific information for your entire team.</p>
+            </div>
+            <div class="card">
+              <h3>🙋‍♀️ The General Public</h3>
+              <p>A simple, private way to remember addresses you'd rather avoid for any reason.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="worker-disclosure" class="alternate-bg">
+        <div class="section-inner">
+          <h2>Worker safety comes first, even when platforms disagree</h2>
+          <p>
+            I built AddressAlarm after too many late-night routes where GPS led me to unlit driveways, customers hurled threats, or tip-baiters dangled pay only to yank it back. Those sketchy encounters showed how easily bad-faith customers exploit "customer service" policies while contractors are told to smile and take it. This tool exists because safety shouldn't be optional or traded for ratings.
+          </p>
+          <p>
+            Gig apps often prioritize volume over people. Many won't let contractors block abusive clients or decline anonymous offers, creating a major safety gap that AddressAlarm helps close by giving you the context those systems withhold.
+          </p>
+          <div class="features-grid">
+            <div class="card">
+              <h3>⚖️ Know the terms (and limits)</h3>
+              <p><strong>Some gig platforms may claim tools like this violate their Terms of Service.</strong> Use AddressAlarm at your own discretion and risk. We can't accept responsibility if a company penalizes you, but we can be clear that protecting yourself is never wrongdoing.</p>
+            </div>
+            <div class="card">
+              <h3>✊ Push back together</h3>
+              <p>Talk with other workers, document retaliation, and contact platform support, regulators, and press when policies put "customer service" ahead of your safety. Collective action is how we pressure companies to respect contractor rights.</p>
+            </div>
+            <div class="card">
+              <h3>🛡️ Built to protect, not to cheat</h3>
+              <p>This tool is exclusively for preventing harmful encounters. It doesn't auto-accept, auto-decline, or manipulate pricing. It simply restores information so you can say no to unsafe work.</p>
+            </div>
+          </div>
+          <h3>How AddressAlarm fits into your phone (ELI5)</h3>
+          <p>
+            AddressAlarm sits quietly alongside the apps you choose. It reads the address on screen, compares it to your private watchlist, and gently alerts you if there's a match—nothing more.
+          </p>
+          <pre class="ascii-diagram" aria-label="Diagram showing AddressAlarm working locally">
+Your Watchlist (stored on-device)
+           │
+           ▼
+    AddressAlarm Service
+           │ checks addresses you view
+           ▼
+Maps / Gig App ➜ Small overlay reminder just for you
+          </pre>
+          <p>
+            Only platforms that already monitor background processes—something their murky TOS currently allow so they can police whether you're protecting your own interests—could notice AddressAlarm running as an accessibility service. That surveillance power should be tightly audited and regulated strictly toward preventing contractors or customers from cheating or abusing the system, not to punish workers for staying safe.
+          </p>
+          <p>
+            We urge you to keep advocating for policies that let contractors block dangerous customers, demand transparency about monitoring, and insist that safety comes before metrics. AddressAlarm is one small, calm way to watch out for yourself without fear mongering—because your life is worth more than any single fare or delivery.
+          </p>
+        </div>
+      </section>
+
+      <section id="features" class="alternate-bg">
+        <div class="section-inner">
+          <h2>Everything you need to stay aware</h2>
+          <div class="features-grid">
+            <div class="card">
+              <h3>🔒 Private &amp; Offline-First</h3>
+              <p>All address matching happens locally. No data ever leaves your device. No servers, no tracking, period.</p>
+            </div>
+            <div class="card">
+              <h3>🏷️ Custom Flags &amp; Tags</h3>
+              <p>Organize your watchlist with tags like "unsafe pet," "hostile," or "use back entrance" so you have context in the moment.</p>
+            </div>
+            <div class="card">
+              <h3>🧠 Smart, Debounced Alerts</h3>
+              <p>Notifications are rate-limited to prevent alert fatigue. The overlay is clear, simple, and designed for at-a-glance safety.</p>
+            </div>
+            <div class="card">
+              <h3>📲 Per-App Visibility</h3>
+              <p>You choose exactly which apps AddressAlarm should monitor. It stays dormant until an app you've enabled is in the foreground.</p>
+            </div>
+            <div class="card">
+              <h3>↔️ Import &amp; Export</h3>
+              <p>Easily back up your flagged addresses or share your watchlist with trusted friends and colleagues.</p>
+            </div>
+             <div class="card">
+              <h3>✅ You're In Control</h3>
+              <p>This tool is a memory aid, not automation. It gives you information so you can make the final choice. It never auto-declines or accepts jobs.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="how-it-works">
+        <div class="section-inner">
+          <h2>Getting Started is Simple</h2>
+          <h3 class="video-subtitle">Watch the full setup walkthrough &amp; live demo</h3>
+          <p class="video-description">
+            Learn how to install AddressAlarm, grant the right permissions, enable notifications, and see a real-world alert in action.
+            The video walks you from a blank device to a fully configured watchlist in minutes.
+          </p>
+          <div class="video-wrapper">
+            <iframe
+              src="https://www.youtube-nocookie.com/embed/EpV65R8QoEg?si=93ZitphvSeRuii4y"
+              title="AddressAlarm setup and demo"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+              referrerpolicy="strict-origin-when-cross-origin"
+              allowfullscreen
+            ></iframe>
+          </div>
+          <ol>
+            <li><strong>Download the APK</strong> from the latest GitHub release.</li>
+            <li><strong>Install the app</strong> and enable the "AddressAlarm" accessibility service in your phone's settings.</li>
+            <li><strong>Build your watchlist</strong> by adding addresses, notes, and tags.</li>
+            <li><strong>Select which apps to monitor</strong> (e.g., Google Maps, Uber Driver).</li>
+            <li><strong>Get alerted!</strong> When a flagged address appears in a monitored app, a warning overlay will appear.</li>
+          </ol>
+          <p>
+            Need a hand? Watch the full walkthrough above or follow the detailed <a href="docs/INSTALLATION.md">Installation Guide</a> for Pixel, Samsung, and other devices.
+          </p>
+        </div>
+      </section>
+
+      <section id="download" class="alternate-bg">
+        <div class="section-inner" style="text-align: center;">
+            <h2>Download AddressAlarm</h2>
+            <p>The app is free, <a href="#open-source" class="tooltip">open-source<span class="tooltip-text">The app's code is public and can be reviewed by anyone. Click to learn more.</span></a>, and ready to install.</p>
+            <p class="build-info">Current build: v0.2.42</p>
+            <span class="badge">Field Test Build 2</span>
+            <a class="button" href="https://github.com/TohnJravolta/AddressAlarm/releases/tag/v0.2.42" target="_blank" rel="noopener">
+              Download the latest version of the app here
+            </a>
+            <p class="small-print">Freshened field test build with stability fixes. Requires Android 8.0 (Oreo) or newer.</p>
+        </div>
+      </section>
+
+      <section id="roadmap">
+        <div class="section-inner">
+          <h2>What’s Next?</h2>
+          <p>AddressAlarm is actively developed. Here are some of the major features planned for the future:</p>
+          <ul class="list-inline roadmap-list">
+            <li class="completed">
+              <strong>Encrypted storage for watchlists</strong>
+              <span class="badge">Shipped Jan 15, 2025</span>
+              <p>Your watchlist now stays encrypted at rest so sensitive notes never leave your device unprotected.</p>
+            </li>
+            <li>
+              <strong>Fuzzy address matching</strong>
+              <p>Match "Apt 4B" with "Unit 4B" and other tricky variants so nothing slips through.</p>
+            </li>
+            <li>
+              <strong>Optional voice and TTS alerts</strong>
+              <p>Enable spoken cues for hands-free awareness while you stay focused on the road.</p>
+            </li>
+            <li>
+              <strong>Guided onboarding tour</strong>
+              <p>Walk new users through setup and best practices right inside the app.</p>
+            </li>
+            <li>
+              <strong>Distribution via F-Droid</strong>
+              <p>Offer an easy, privacy-respecting install path outside of manual APK downloads.</p>
+            </li>
+          </ul>
+          <p>
+            See the <a href="ROADMAP.md">full roadmap</a> for more, or suggest a feature on
+            <a href="https://github.com/TohnJravolta/AAT/issues" target="_blank" rel="noopener">GitHub</a>.
+          </p>
+        </div>
+      </section>
+
+      <section id="support" class="alternate-bg">
+        <div class="section-inner">
+          <h2>Support the mission in good faith</h2>
+          <p>
+            AddressAlarm is designed, coded, and tested by a solo developer squeezing in late nights between 40–60 hour courier shifts.
+            If this project helps you stay safe, consider backing the hosting costs and future builds so it can keep shipping.
+          </p>
+          <p>
+            Every contribution is a vote for worker-built tools—covering server bills today and buying time to craft tomorrow's safety updates.
+            Choose a simple monthly contribution or a one-time donation—whatever fits your budget keeps the alerts flowing for everyone relying on them.
+          </p>
+          <a class="button" href="https://ko-fi.com/tohnjburray" target="_blank" rel="noopener">Support AddressAlarm</a>
+        </div>
+      </section>
+
+      <section id="open-source">
+        <div class="section-inner">
+          <h2>What is Open Source?</h2>
+          <p style="text-align: center; max-width: 720px; margin-left: auto; margin-right: auto;">
+            AddressAlarm is a <span class="tooltip">FOSS<span class="tooltip-text">Free and Open Source Software</span></span> project. That means it's more than just free of charge—it's built on a foundation of freedom, transparency, and community.
+          </p>
+          <div class="features-grid" style="margin-top: 3rem;">
+            <div class="card">
+              <h3>📖 The Source is Open</h3>
+              <p>The "source code"—the human-readable instructions that make the app work—is available for anyone to see, study, and verify. There are no hidden agendas. You can see exactly how AddressAlarm protects your data because the code is public on GitHub.</p>
+            </div>
+            <div class="card">
+              <h3>🤝 Freedom &amp; Collaboration</h3>
+              <p>You have the freedom to use the software for any purpose and even modify it. This encourages a global community of developers and users to work together, share improvements, and make the tool better for everyone.</p>
+            </div>
+            <div class="card">
+              <h3>💖 Community Supported</h3>
+              <p>This project is not owned by a corporation. It's built and maintained by volunteers and is funded entirely by user donations. This ensures the project's goals will always stay aligned with the users' best interests: privacy, security, and safety.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="developers" class="alternate-bg">
+        <div class="section-inner">
+          <h2>For Developers &amp; Contributors</h2>
+          <p>
+            AddressAlarm is a community-driven, <a href="#open-source" class="tooltip">FOSS<span class="tooltip-text">Free and Open Source Software. Click to learn more.</span></a> project licensed under AGPL-3.0. We welcome contributors of all levels.
+            Check out the source code, review our coding standards, and help us build the future of on-device safety tools.
+          </p>
+          <p>
+            <a href="CONTRIBUTING.md">Contributing Guide</a> &bull;
+            <a href="SECURITY.md">Security Policy</a> &bull;
+            <a href="SUPPORT.md">Support Channels</a>
+          </p>
+        </div>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <div id="music-player">
+        <button id="play-music-btn" title="Toggle background music">[ Activate BGM ]</button>
+      </div>
+      <p>
+        Copyright &copy; 2025 TohnJravolta and AddressAlarm Contributors.
+        Licensed under the <a href="LICENSE">GNU AGPL v3.0</a>.
+      </p>
+      <p>
+        <a href="PRIVACY_POLICY.md">Privacy Policy</a> &bull;
+        <a href="TERMS.md">Terms of Use</a> &bull;
+        <a href="https://github.com/TohnJravolta/AAT" target="_blank" rel="noopener">View Source on GitHub</a>
+      </p>
+      <p>
+        <a
+          class="kofi-icon"
+          href="https://ko-fi.com/tohnjburray"
+          target="_blank"
+          rel="noopener"
+          aria-label="Support AddressAlarm development via Ko-fi"
+        >☕</a>
+      </p>
+    </footer>
+    <script>
+    document.addEventListener('DOMContentLoaded', (event) => {
+        // --- Theme Switcher ---
+        const themeSwitcher = document.getElementById('theme-switcher');
+        const body = document.body;
+        let selectedTheme = 'dark';
+        let musicEngine;
+
+        const setTheme = (theme) => {
+            if (theme === 'light') {
+                body.classList.add('light-mode');
+                themeSwitcher.textContent = '🌙';
+                themeSwitcher.title = 'Switch to dark mode';
+            } else {
+                body.classList.remove('light-mode');
+                themeSwitcher.textContent = '☀️';
+                themeSwitcher.title = 'Switch to light mode';
+            }
+            selectedTheme = theme === 'light' ? 'light' : 'dark';
+            if (musicEngine && typeof musicEngine.applyTheme === 'function') {
+                musicEngine.applyTheme(selectedTheme);
+            }
+        };
+
+        themeSwitcher.addEventListener('click', () => {
+            const isLight = body.classList.contains('light-mode');
+            if (isLight) {
+                localStorage.setItem('theme', 'dark');
+                setTheme('dark');
+            } else {
+                localStorage.setItem('theme', 'light');
+                setTheme('light');
+            }
+        });
+
+        // Load saved theme from localStorage
+        const savedTheme = localStorage.getItem('theme') || 'dark';
+        setTheme(savedTheme);
+
+        // --- Tooltip Positioning ---
+        const tooltipEntries = Array.from(document.querySelectorAll('.tooltip'))
+            .map(trigger => ({ trigger, text: trigger.querySelector('.tooltip-text') }))
+            .filter(entry => entry.text);
+
+        const adjustTooltipPosition = (tooltipText) => {
+            if (!tooltipText) return;
+            tooltipText.style.setProperty('--tooltip-shift', '0px');
+            requestAnimationFrame(() => {
+                const rect = tooltipText.getBoundingClientRect();
+                const viewportPadding = 16;
+                let shift = 0;
+                if (rect.left < viewportPadding) {
+                    shift = viewportPadding - rect.left;
+                } else if (rect.right > window.innerWidth - viewportPadding) {
+                    shift = (window.innerWidth - viewportPadding) - rect.right;
+                }
+                tooltipText.style.setProperty('--tooltip-shift', `${shift}px`);
+            });
+        };
+
+        tooltipEntries.forEach(({ trigger, text }) => {
+            const showHandler = () => adjustTooltipPosition(text);
+            const resetHandler = () => text.style.setProperty('--tooltip-shift', '0px');
+            trigger.addEventListener('pointerenter', showHandler);
+            trigger.addEventListener('focusin', showHandler);
+            trigger.addEventListener('pointerleave', resetHandler);
+            trigger.addEventListener('focusout', resetHandler);
+            trigger.addEventListener('touchstart', showHandler, { passive: true });
+            trigger.addEventListener('touchend', resetHandler, { passive: true });
+            trigger.addEventListener('touchcancel', resetHandler, { passive: true });
+        });
+
+        window.addEventListener('resize', () => {
+            tooltipEntries.forEach(({ text }) => {
+                if (window.getComputedStyle(text).visibility === 'visible') {
+                    adjustTooltipPosition(text);
+                }
+            });
+        });
+
+        // --- Visual Effects ---
+        const initVisuals = () => {
+            const bouncingLogo = document.getElementById('bouncing-logo');
+            if (bouncingLogo) console.log('Bouncing logo animation is active via CSS.');
+
+            const trails = [];
+            const numTrails = 15;
+            const trailLag = 1.8;
+            for (let i = 0; i < numTrails; i++) {
+                let trail = document.createElement('div');
+                trail.className = 'trail';
+                document.body.appendChild(trail);
+                trails.push({ el: trail, x: -20, y: -20 });
+            }
+
+            let pointerX = -20, pointerY = -20;
+
+            const updatePointer = (x, y) => {
+                pointerX = x;
+                pointerY = y;
+            };
+
+            const spawnTapBurst = (x, y) => {
+                const isLightMode = selectedTheme === 'light';
+                const palettes = isLightMode
+                    ? [
+                        { fill: '#66bb6a', glow: 'rgba(102, 187, 106, 0.45)' },
+                        { fill: '#9ccc65', glow: 'rgba(156, 204, 101, 0.45)' },
+                        { fill: '#43a047', glow: 'rgba(67, 160, 71, 0.4)' },
+                        { fill: '#2e7d32', glow: 'rgba(46, 125, 50, 0.35)' }
+                    ]
+                    : [
+                        { fill: '#00ff9d', glow: 'rgba(0, 255, 157, 0.6)' },
+                        { fill: '#00e676', glow: 'rgba(0, 230, 118, 0.55)' },
+                        { fill: '#00c853', glow: 'rgba(0, 200, 83, 0.5)' },
+                        { fill: '#64ffda', glow: 'rgba(100, 255, 218, 0.55)' }
+                    ];
+                const particleCount = isLightMode ? 10 + Math.floor(Math.random() * 4) : 12 + Math.floor(Math.random() * 6);
+                const sizeMin = isLightMode ? 6 : 9;
+                const sizeMax = isLightMode ? 18 : 28;
+                const distanceMin = isLightMode ? 22 : 34;
+                const distanceMax = isLightMode ? 46 : 70;
+                for (let i = 0; i < particleCount; i++) {
+                    const particle = document.createElement('div');
+                    particle.className = 'tap-particle';
+                    const size = sizeMin + Math.random() * (sizeMax - sizeMin);
+                    particle.style.width = `${size}px`;
+                    particle.style.height = `${size}px`;
+                    particle.style.left = `${x}px`;
+                    particle.style.top = `${y}px`;
+                    const color = palettes[Math.floor(Math.random() * palettes.length)];
+                    particle.style.background = color.fill;
+                    const glowRadius = isLightMode ? 8 + Math.random() * 10 : 12 + Math.random() * 16;
+                    particle.style.boxShadow = `0 0 ${glowRadius}px ${color.glow}`;
+                    particle.style.opacity = isLightMode ? 0.65 + Math.random() * 0.25 : 0.8 + Math.random() * 0.15;
+                    const angle = Math.random() * Math.PI * 2;
+                    const distance = distanceMin + Math.random() * (distanceMax - distanceMin);
+                    const dx = Math.cos(angle) * distance;
+                    const dy = Math.sin(angle) * distance;
+                    particle.style.setProperty('--dx', `${dx}px`);
+                    particle.style.setProperty('--dy', `${dy}px`);
+                    document.body.appendChild(particle);
+                    particle.addEventListener('animationend', () => particle.remove());
+                }
+            };
+
+            const handleTouch = (event, shouldBurst = false) => {
+                if (event.touches && event.touches.length) {
+                    const touch = event.touches[0];
+                    updatePointer(touch.pageX, touch.pageY);
+                    if (shouldBurst) {
+                        spawnTapBurst(touch.pageX, touch.pageY);
+                    }
+                }
+            };
+
+            if (window.PointerEvent) {
+                document.addEventListener('pointermove', e => {
+                    if (e.isPrimary) {
+                        updatePointer(e.pageX, e.pageY);
+                    }
+                }, { passive: true });
+                document.addEventListener('pointerdown', e => {
+                    if (!e.isPrimary) return;
+                    updatePointer(e.pageX, e.pageY);
+                    spawnTapBurst(e.pageX, e.pageY);
+                });
+            } else {
+                document.addEventListener('mousemove', e => {
+                    updatePointer(e.pageX, e.pageY);
+                });
+                document.addEventListener('mousedown', e => {
+                    updatePointer(e.pageX, e.pageY);
+                    spawnTapBurst(e.pageX, e.pageY);
+                });
+                document.addEventListener('touchstart', e => handleTouch(e, true), { passive: true });
+                document.addEventListener('touchmove', handleTouch, { passive: true });
+            }
+
+            const animateTrail = () => {
+                let prevX = pointerX, prevY = pointerY;
+                trails.forEach(p => {
+                    const currentX = p.x, currentY = p.y;
+                    p.x += (prevX - currentX) / trailLag;
+                    p.y += (prevY - currentY) / trailLag;
+                    p.el.style.left = p.x + 'px';
+                    p.el.style.top = p.y + 'px';
+                    prevX = currentX;
+                    prevY = currentY;
+                });
+                requestAnimationFrame(animateTrail);
+            };
+            animateTrail();
+        };
+        initVisuals();
+
+        // --- Interactive Music Engine ---
+        musicEngine = {
+            audioCtx: null,
+            isPlaying: false,
+            phase: 0,
+            tempo: 120,
+            beat: 0,
+            nextNoteTime: 0.0,
+            scheduleAheadTime: 0.1,
+            lookahead: 25.0,
+            timerID: null,
+            mousePos: { x: 0.5, y: 0.5 },
+            scale: [],
+            patterns: {
+                kick: new Array(16).fill(0),
+                hat: new Array(16).fill(0),
+                bass: new Array(16).fill(0),
+                arp1: new Array(16).fill(0),
+                arp2: new Array(16).fill(0),
+            },
+            themeSettings: {
+                dark: {
+                    tempo: 92,
+                    scale: [220.00, 246.94, 261.63, 293.66, 329.63, 392.00, 440.00],
+                    patterns: {
+                        kick: [1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0],
+                        hat: [0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0],
+                        bass: [1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0],
+                        arp1: [1, 0, 0, 1, 0, 0, 1, 0, 1, 0, 0, 1, 0, 0, 1, 0],
+                        arp2: [0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0],
+                    },
+                    kickGain: 0.9,
+                    kickStart: 120,
+                    kickDecay: 0.6,
+                    hatGain: 0.12,
+                    hatDecay: 0.2,
+                    bassGain: 0.24,
+                    bassDecay: 0.28,
+                    bassFilter: 280,
+                    arpGain: 0.12,
+                    arpDecay: 0.16,
+                    arpFilterBase: 600,
+                    arpFilterRange: 1400,
+                    delayFeedback: 0.35,
+                    echoGain: 0.2,
+                    echoDecay: 0.6,
+                },
+                light: {
+                    tempo: 132,
+                    scale: [261.63, 329.63, 392.00, 440.00, 523.25, 659.25, 783.99],
+                    patterns: {
+                        kick: [1, 0, 0, 0, 1, 0, 1, 0, 1, 0, 0, 0, 1, 0, 1, 0],
+                        hat: [0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1],
+                        bass: [1, 0, 0, 1, 0, 0, 1, 0, 1, 0, 0, 1, 0, 0, 1, 0],
+                        arp1: [1, 1, 0, 1, 1, 0, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1],
+                        arp2: [0, 1, 1, 0, 1, 1, 0, 1, 0, 1, 1, 0, 1, 1, 0, 1],
+                    },
+                    kickGain: 1.0,
+                    kickStart: 180,
+                    kickDecay: 0.35,
+                    hatGain: 0.28,
+                    hatDecay: 0.12,
+                    bassGain: 0.32,
+                    bassDecay: 0.22,
+                    bassFilter: 520,
+                    arpGain: 0.18,
+                    arpDecay: 0.12,
+                    arpFilterBase: 1100,
+                    arpFilterRange: 2600,
+                    delayFeedback: 0.52,
+                    echoGain: 0.26,
+                    echoDecay: 0.45,
+                }
+            },
+            currentTheme: 'dark',
+            hatGain: 0.2,
+            hatDecay: 0.1,
+            kickGain: 1,
+            kickStart: 150,
+            kickDecay: 0.5,
+            bassGain: 0.3,
+            bassDecay: 0.25,
+            bassFilter: 400,
+            arpGain: 0.15,
+            arpDecay: 0.1,
+            arpFilterBase: 800,
+            arpFilterRange: 2000,
+            delayFeedback: 0.4,
+            echoGain: 0.24,
+            echoDecay: 0.5,
+
+            applyTheme(theme) {
+                const settings = this.themeSettings[theme] || this.themeSettings.dark;
+                this.currentTheme = theme;
+                this.tempo = settings.tempo;
+                this.scale = settings.scale.slice();
+                this.patterns = {
+                    kick: settings.patterns.kick.slice(),
+                    hat: settings.patterns.hat.slice(),
+                    bass: settings.patterns.bass.slice(),
+                    arp1: settings.patterns.arp1.slice(),
+                    arp2: settings.patterns.arp2.slice(),
+                };
+                this.kickGain = settings.kickGain;
+                this.kickStart = settings.kickStart;
+                this.kickDecay = settings.kickDecay;
+                this.hatGain = settings.hatGain;
+                this.hatDecay = settings.hatDecay;
+                this.bassGain = settings.bassGain;
+                this.bassDecay = settings.bassDecay;
+                this.bassFilter = settings.bassFilter;
+                this.arpGain = settings.arpGain;
+                this.arpDecay = settings.arpDecay;
+                this.arpFilterBase = settings.arpFilterBase;
+                this.arpFilterRange = settings.arpFilterRange;
+                this.delayFeedback = settings.delayFeedback;
+                this.echoGain = settings.echoGain;
+                this.echoDecay = settings.echoDecay;
+                if (this.isPlaying && this.audioCtx) {
+                    this.beat = 0;
+                    this.nextNoteTime = this.audioCtx.currentTime;
+                }
+            },
+
+            init() {
+                document.getElementById('play-music-btn').addEventListener('click', () => this.toggle());
+
+                const updateMousePos = (clientX, clientY) => {
+                    this.mousePos.x = Math.min(Math.max(clientX / window.innerWidth, 0), 1);
+                    this.mousePos.y = Math.min(Math.max(clientY / window.innerHeight, 0), 1);
+                };
+
+                if (window.PointerEvent) {
+                    document.addEventListener('pointermove', e => {
+                        if (e.isPrimary) {
+                            updateMousePos(e.clientX, e.clientY);
+                        }
+                    }, { passive: true });
+                } else {
+                    document.addEventListener('mousemove', e => {
+                        updateMousePos(e.clientX, e.clientY);
+                    });
+                    document.addEventListener('touchmove', e => {
+                        if (e.touches && e.touches.length) {
+                            updateMousePos(e.touches[0].clientX, e.touches[0].clientY);
+                        }
+                    }, { passive: true });
+                }
+                document.body.addEventListener('click', e => {
+                    if (this.isPlaying && e.target.id !== 'play-music-btn') {
+                        this.phase = (this.phase + 1) % 6;
+                        this.playEcho();
+                    }
+                });
+                this.applyTheme(selectedTheme);
+            },
+
+            toggle() {
+                if (!this.audioCtx) {
+                    this.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                }
+                if (this.audioCtx.state === 'suspended') {
+                    this.audioCtx.resume();
+                }
+                this.isPlaying = !this.isPlaying;
+                const playBtn = document.getElementById('play-music-btn');
+                if (this.isPlaying) {
+                    this.beat = 0;
+                    this.nextNoteTime = this.audioCtx.currentTime;
+                    this.scheduler();
+                    this.timerID = setInterval(() => this.scheduler(), this.lookahead);
+                    playBtn.textContent = '[ BGM Active ]';
+                } else {
+                    clearInterval(this.timerID);
+                    playBtn.textContent = '[ Activate BGM ]';
+                }
+            },
+
+            scheduler() {
+                while (this.nextNoteTime < this.audioCtx.currentTime + this.scheduleAheadTime) {
+                    this.scheduleNote(this.beat, this.nextNoteTime);
+                    this.nextNoteTime += 60.0 / this.tempo / 4; // 16th notes
+                    this.beat = (this.beat + 1) % 16;
+                }
+            },
+
+            scheduleNote(beat, time) {
+                if (this.phase >= 0 && this.patterns.kick[beat]) this.playKick(time);
+                if (this.phase >= 1 && this.patterns.hat[beat]) this.playHat(time);
+                if (this.phase >= 2 && this.patterns.bass[beat]) this.playBass(time, beat);
+                if (this.phase >= 3 && this.patterns.arp1[beat]) this.playArp(time, 1);
+                if (this.phase >= 4 && this.patterns.arp2[beat]) this.playArp(time, 2);
+                if (this.phase >= 5) this.updateFilter(time);
+            },
+
+            playKick(time) {
+                const osc = this.audioCtx.createOscillator();
+                const gain = this.audioCtx.createGain();
+                osc.frequency.setValueAtTime(this.kickStart, time);
+                osc.frequency.exponentialRampToValueAtTime(0.01, time + this.kickDecay);
+                gain.gain.setValueAtTime(this.kickGain, time);
+                gain.gain.exponentialRampToValueAtTime(0.01, time + this.kickDecay);
+                osc.connect(gain);
+                gain.connect(this.audioCtx.destination);
+                osc.start(time);
+                osc.stop(time + this.kickDecay);
+            },
+
+            playHat(time) {
+                const bufferSize = this.audioCtx.sampleRate * 0.1;
+                const buffer = this.audioCtx.createBuffer(1, bufferSize, this.audioCtx.sampleRate);
+                const output = buffer.getChannelData(0);
+                for (let i = 0; i < bufferSize; i++) output[i] = Math.random() * 2 - 1;
+                const noise = this.audioCtx.createBufferSource();
+                noise.buffer = buffer;
+                const filter = this.audioCtx.createBiquadFilter();
+                filter.type = 'highpass';
+                filter.frequency.value = 10000;
+                const gain = this.audioCtx.createGain();
+                gain.gain.setValueAtTime(this.hatGain, time);
+                gain.gain.exponentialRampToValueAtTime(0.01, time + this.hatDecay);
+                noise.connect(filter);
+                filter.connect(gain);
+                gain.connect(this.audioCtx.destination);
+                noise.start(time);
+                noise.stop(time + this.hatDecay);
+            },
+
+            playBass(time, beat) {
+                const osc = this.audioCtx.createOscillator();
+                osc.type = 'sawtooth';
+                const freq = this.scale[beat % 4] / 2; // Simple bassline from scale
+                osc.frequency.setValueAtTime(freq, time);
+                const gain = this.audioCtx.createGain();
+                gain.gain.setValueAtTime(this.bassGain, time);
+                gain.gain.exponentialRampToValueAtTime(0.01, time + this.bassDecay);
+                const filter = this.audioCtx.createBiquadFilter();
+                filter.type = 'lowpass';
+                filter.frequency.value = this.bassFilter;
+                osc.connect(filter);
+                filter.connect(gain);
+                gain.connect(this.audioCtx.destination);
+                osc.start(time);
+                osc.stop(time + this.bassDecay);
+            },
+
+            playArp(time, octave) {
+                const osc = this.audioCtx.createOscillator();
+                osc.type = 'square';
+                const noteIndex = Math.floor(this.mousePos.y * this.scale.length);
+                const freq = this.scale[noteIndex] * octave;
+                osc.frequency.setValueAtTime(freq, time);
+
+                const gain = this.audioCtx.createGain();
+                gain.gain.setValueAtTime(this.arpGain, time);
+                gain.gain.exponentialRampToValueAtTime(0.01, time + this.arpDecay);
+
+                const filter = this.audioCtx.createBiquadFilter();
+                filter.type = 'lowpass';
+                filter.frequency.value = this.arpFilterBase + (this.mousePos.x * this.arpFilterRange); // Mouse X controls filter
+
+                const delay = this.audioCtx.createDelay();
+                delay.delayTime.value = (60.0 / this.tempo) * 0.75; // Dotted 8th note delay
+                const feedback = this.audioCtx.createGain();
+                feedback.gain.value = this.delayFeedback;
+
+                osc.connect(filter);
+                filter.connect(gain);
+                gain.connect(delay);
+                delay.connect(feedback);
+                feedback.connect(delay);
+                gain.connect(this.audioCtx.destination);
+                feedback.connect(this.audioCtx.destination);
+
+                osc.start(time);
+                osc.stop(time + 0.1);
+            },
+
+            updateFilter(time) {
+                // This could be used for a global filter sweep in phase 5/6
+                // For now, mouse X control on the arp filter is sufficient
+            },
+
+            playEcho() {
+                const time = this.audioCtx.currentTime;
+                const osc = this.audioCtx.createOscillator();
+                osc.type = 'sine';
+                const noteIndex = Math.floor(this.mousePos.y * this.scale.length);
+                osc.frequency.setValueAtTime(this.scale[noteIndex] * 2, time);
+                const gain = this.audioCtx.createGain();
+                gain.gain.setValueAtTime(this.echoGain, time);
+                gain.gain.exponentialRampToValueAtTime(0.01, time + this.echoDecay);
+                osc.connect(gain);
+                gain.connect(this.audioCtx.destination);
+                osc.start(time);
+                osc.stop(time + this.echoDecay);
+            }
+        };
+        musicEngine.init();
+    });
+    </script>
+  </body>
+</html>

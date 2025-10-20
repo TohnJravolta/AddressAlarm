@@ -18,6 +18,15 @@ Originally designed with gig workers in mind, AddressAlarm now supports law enfo
 
 ---
 
+## 🎥 Setup walkthrough & live demo
+
+[Watch the initial configuration walkthrough and live demo on YouTube](https://www.youtube-nocookie.com/embed/EpV65R8QoEg?si=93ZitphvSeRuii4y).
+The video covers downloading the APK, granting accessibility permissions, enabling notifications, tuning alerts, and shows AddressAlarm catching a flagged location in real time so you can follow along from a fresh install.
+
+---
+
+## 📱 Screenshots (Coming Soon)
+*(Add screenshots here once you have a stable build to show)*
 ## Core features
 
 - On-device matching: no data or addresses ever leave your phone.
